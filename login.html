@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap - AI Assessment</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --bg: #dfe6e9;
+            --white: #ffffff;
+            --text: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 3em;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        h2 { color: var(--text); margin-bottom: 5px; }
+        p { color: #636e72; font-size: 0.9em; margin-bottom: 30px; }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 2px solid #f1f2f6;
+            border-radius: 12px;
+            background: #fdfdfd;
+            box-sizing: border-box;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        button:hover {
+            background-color: #5849be;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="logo">🚀</div>
+        <h2>Hoşgeldiniz</h2>
+        <p>AI Destekli İngilizce Seviye Tespit Sınavı</p>
+        
+        <form action="/login" method="POST">
+            <input type="text" name="name" placeholder="Adınız Soyadınız" required>
+            <input type="email" name="email" placeholder="E-posta Adresiniz" required>
+            <button type="submit">Sınava Başla</button>
+        </form>
+    </div>
+</body>
+</html>

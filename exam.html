@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sınav Paneli</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Merriweather:wght@300;400;700&display=swap');
+        
+        :root {
+            --bg: #f8f9fa;
+            --white: #ffffff;
+            --primary: #00796b; /* Görseldeki Teal Rengi */
+            --primary-hover: #004d40;
+            --light-blue: #e0f2f1;
+            --text: #263238;
+            --border: #eceff1;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text);
+            overflow: hidden; /* Dış scrollu engelle */
+        }
+
+        /* --- Üst Bar --- */
+        .header {
+            background: var(--white);
+            padding: 0 40px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            flex-shrink: 0;
+        }
+
+        /* İlerleme Çubuğu */
+        .progress-container {
+            flex-grow: 1;
+            max-width: 600px;
+            margin: 0 40px;
+            background-color: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background-color: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* --- SPLIT SCREEN LAYOUT (BÖLÜNMÜŞ EKRAN) --- */
+        .exam-container {
+            display: flex;
+            flex: 1;
+            padding: 40px;
+            gap: 40px;
+            height: calc(100vh - 70px); /* Header hariç yükseklik */
+            box-sizing: border-box;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* --- SOL PANEL: Okuma Parçası --- */
+        .reading-pane {
+            flex: 1;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            overflow-y: auto; /* Kendi içinde scroll */
+            font-family: 'Merriweather', serif; /* Akademik okuma fontu */
+            line-height: 1.8;
+            font-size: 1.05rem;
+            color: #37474f;
+            display: none; /* Varsayılan gizli */
+        }
+
+        /* --- SAĞ PANEL: Soru ve Şıklar --- */
+        .question-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Butonu alta itmek için */
+            max-width: 800px; /* Tek sütun olduğunda çok yayılmasın */
+            margin: 0 auto; /* Tek sütunda ortala */
+            width: 100%;
+        }
+
+        .info-box {
+            background-color: var(--light-blue);
+            padding: 10px 15px;
+            border-radius: 6px;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.85em;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 20px 25px;
+            background: var(--white);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .option-label:hover {
+            border-color: var(--primary);
+            background: #fdfdfd;
+        }
+
+        /* Radio Button Gizleme ve Özelleştirme */
+        .option-label input {
+            margin-right: 20px;
+            accent-color: var(--primary);
+            transform: scale(1.3);
+            cursor: pointer;
+        }
+        
+        /* Seçili Durum */
+        .option-label.selected {
+            border-color: var(--primary);
+            background-color: #e0f2f1;
+            color: var(--primary-hover);
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 121, 107, 0.15);
+        }
+
+        .next-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            align-self: flex-end; /* Sağa yasla */
+            transition: 0.3s;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(0, 121, 107, 0.3);
+        }
+        .next-btn:hover { 
+            background-color: var(--primary-hover);
+            transform: translateY(-2px); 
+        }
+
+        /* Scrollbar Özelleştirme */
+        .reading-pane::-webkit-scrollbar { width: 8px; }
+        .reading-pane::-webkit-scrollbar-track { background: #f1f1f1; }
+        .reading-pane::-webkit-scrollbar-thumb { background: #cfd8dc; border-radius: 4px; }
+        .reading-pane::-webkit-scrollbar-thumb:hover { background: #b0bec5; }
+
+        /* Tek Sütun Görünüm (Grammar/Vocab için) */
+        .single-view .reading-pane { display: none !important; }
+        .single-view .exam-container { justify-content: center; }
+        
+        /* Loading Ekranı */
+        #loader {
+            display: flex; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: var(--white); 
+            z-index: 999; 
+            justify-content: center; 
+            align-items: center;
+            flex-direction: column;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <h2 style="font-size: 2em; margin-bottom: 10px;">🚀 Sınav Hazırlanıyor...</h2>
+        <p style="color: #666;">Yapay Zeka soruları derliyor.</p>
+    </div>
+
+    <div class="header">
+        <div style="font-weight:700; font-size:1.4em; color: var(--primary);">AI Assessment</div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div style="font-size:1em; font-weight: 600; color:#546e7a">
+            Soru <span id="q-current" style="color:var(--primary)">1</span> / <span id="q-total">--</span>
+        </div>
+    </div>
+
+    <div class="exam-container" id="exam-layout">
+        
+        <div class="reading-pane" id="reading-content">
+            <h3 style="margin-top:0; color:var(--primary); border-bottom:2px solid #eee; padding-bottom:15px;">Reading Passage</h3>
+            <div id="passage-text" style="font-size: 1.1em;">
+                </div>
+        </div>
+
+        <div class="question-pane">
+            <div style="flex-grow: 1;">
+                <div class="info-box" id="module-badge">
+                    Yükleniyor...
+                </div>
+
+                <div class="question-text" id="q-text">
+                    Soru verisi bekleniyor...
+                </div>
+
+                <div class="options-grid" id="options-area">
+                    </div>
+            </div>
+
+            <button class="next-btn" onclick="nextQ()">Sonraki Soru ➔</button>
+        </div>
+    </div>
+
+    <script>
+        let testId = null, questions = [], currentIdx = 0, answers = [], currentAns = null;
+
+        // Sayfa Yüklendiğinde
+        window.onload = async () => {
+            try {
+                const res = await fetch('/api/start', {method: 'POST'});
+                const data = await res.json();
+                
+                if(!data.questions || data.questions.length === 0) {
+                    alert("Soru yüklenemedi! Veritabanını kontrol edin.");
+                    return;
+                }
+
+                testId = data.testId;
+                questions = data.questions;
+                
+                document.getElementById('q-total').innerText = questions.length;
+                renderQ();
+                
+                // Loader'ı gizle
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                }, 500); // Yarım saniye bekle (akıcılık için)
+
+            } catch (e) { 
+                console.error(e);
+                alert("Bağlantı hatası! Lütfen sayfayı yenileyin."); 
+            }
+        };
+
+        function renderQ() {
+            if(currentIdx >= questions.length) { finish(); return; }
+            
+            const q = questions[currentIdx];
+            const layout = document.getElementById('exam-layout');
+            const readingPane = document.getElementById('reading-content');
+            const passageText = document.getElementById('passage-text');
+            const questionText = document.getElementById('q-text');
+            const moduleBadge = document.getElementById('module-badge');
+            
+            // Progress Bar Güncelle
+            let percent = ((currentIdx + 1) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('q-current').innerText = currentIdx + 1;
+
+            // Modül Bilgisi Yaz
+            moduleBadge.innerText = q.module.toUpperCase() + " SECTION";
+
+            // --- GÖRÜNÜM AYARLARI (Reading vs Diğerleri) ---
+            
+            // Eğer Reading ise VE metin "PASSAGE:" içeriyorsa
+            if (q.module === "Reading" && (q.text.includes("PASSAGE:") || q.text.includes("Passage:"))) {
+                layout.classList.remove('single-view'); // Çift sütun yap
+                readingPane.style.display = 'block';    // Sol paneli aç
+                
+                // Metni Parçala: "PASSAGE: ... QUESTION: ..."
+                // Regex: Hem büyük hem küçük harf duyarlı ayırıcı
+                let parts = q.text.split(/QUESTION:|Question:/); 
+                
+                if(parts.length > 1) {
+                    let rawPassage = parts[0].replace(/PASSAGE:|Passage:/, "").trim();
+                    let rawQuestion = parts[1].trim();
+                    
+                    // Paragraf boşluklarını <br> ile düzelt
+                    passageText.innerHTML = rawPassage.replace(/\n/g, '<br><br>');
+                    questionText.innerText = rawQuestion;
+                } else {
+                    // Ayıramazsa manuel bas
+                    passageText.innerText = q.text;
+                    questionText.innerText = "Please read the text on the left.";
+                }
+
+            } else {
+                // Reading DEĞİLSE (Vocab, Grammar) -> Tek Sütun Yap
+                layout.classList.add('single-view');
+                readingPane.style.display = 'none'; // Sol paneli gizle
+                
+                // Soru metni "Question:" içeriyorsa temizle (Opsiyonel temizlik)
+                let cleanText = q.text.replace(/QUESTION:|Question:/, "").trim();
+                questionText.innerText = cleanText;
+            }
+            
+            // Şıkları Oluştur
+            let optsHtml = '';
+            for(let k in q.options) {
+                optsHtml += `
+                <label class="option-label" onclick="select(this, '${k}')">
+                    <input type="radio" name="opt" value="${k}">
+                    <span>${q.options[k]}</span>
+                </label>`;
+            }
+            document.getElementById('options-area').innerHTML = optsHtml;
+            currentAns = null; // Seçimi sıfırla
+        }
+
+        function select(el, val) {
+            currentAns = val;
+            // Görsel seçim efekti
+            document.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
+            el.classList.add('selected');
+            // Radio button'u check et
+            el.querySelector('input').checked = true;
+        }
+
+        function nextQ() {
+            if(!currentAns) return alert("Lütfen devam etmeden önce bir şıkkı işaretleyin.");
+            
+            answers.push({q_id: questions[currentIdx].id, answer: currentAns});
+            currentIdx++;
+            renderQ();
+        }
+
+        async function finish() {
+            const loader = document.getElementById('loader');
+            loader.innerHTML = `
+                <h2 style="font-size:2em;">🎉 Sınav Bitti!</h2>
+                <p>Yapay Zeka sonuçlarını analiz ediyor...</p>
+            `;
+            loader.style.display = 'flex';
+            
+            try {
+                const res = await fetch('/api/submit', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({testId: testId, answers: answers})
+                });
+                const d = await res.json();
+                window.location.href = `/result/${d.testId}`;
+            } catch(e) {
+                alert("Sonuç gönderilirken hata oluştu.");
+                console.error(e);
+            }
+        }
+    </script>
+</body>
+</html>

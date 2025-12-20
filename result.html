@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sınav Sonucu</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        
+        :root {
+            --bg: #f4f7f6;
+            --white: #ffffff;
+            --primary: #0984e3;
+            --green: #00b894;
+            --purple: #6c5ce7;
+            --text: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            padding: 40px;
+            color: var(--text);
+        }
+
+        .container { max-width: 900px; margin: 0 auto; }
+
+        .header-box {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        /* Sonuç Kartları */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .score-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            border-top: 6px solid var(--primary);
+        }
+
+        .level-badge {
+            display: inline-block;
+            width: 100px; height: 100px;
+            line-height: 100px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(9, 132, 227, 0.4);
+        }
+
+        .score-text { font-size: 2.5em; font-weight: bold; color: var(--green); }
+
+        /* Plan Kartı */
+        .plan-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--purple);
+        }
+
+        .ai-feedback {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #e1e1e1;
+            margin-bottom: 30px;
+            
+            /* Uzun metinler için dikey scrollbar */
+            max-height: 400px; 
+            overflow-y: auto; 
+        }
+
+        /* pre etiketi için özel stil */
+        .ai-feedback pre {
+            /* Font ayarını burada yapıyoruz */
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #2d3436;
+            line-height: 1.6;
+            
+            /* Yatay scrollbar'ı engelle ve alt satıra geçir */
+            white-space: pre-wrap;       /* CSS3 */
+            white-space: -moz-pre-wrap;  /* Mozilla */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* IE 5.5+ */
+            
+            margin: 0; /* pre'nin varsayılan marginini sıfırla */
+        }
+
+        .material-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f2f6;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+        .material-item:hover { transform: translateX(5px); background: #dfe6e9; }
+
+        .tag {
+            background: var(--purple); color: white;
+            padding: 5px 12px; border-radius: 20px; font-size: 0.8em;
+            margin-right: 15px;
+        }
+
+        .btn-link {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .retry-btn {
+            display: block;
+            width: 200px;
+            margin: 40px auto;
+            padding: 15px;
+            background: var(--text);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .retry-btn:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-box">
+        <h1>🎉 Tebrikler, {{ user.name }}!</h1>
+        <p>Sınav tamamlandı. İşte AI analiz raporun.</p>
+    </div>
+
+    <div class="grid-container">
+        <div class="score-card">
+            <div class="level-badge">{{ report.cefr_level }}</div>
+            <h3>CEFR Seviyen</h3>
+        </div>
+        <div class="score-card" style="border-color: var(--green);">
+            <div class="score-text">%{{ report.total_score }}</div>
+            <h3>Toplam Başarı</h3>
+        </div>
+    </div>
+
+    <div class="plan-card">
+        <h3 style="color:var(--purple)">🤖 AI Değerlendirmesi</h3>
+        <div class="ai-feedback">
+            <pre>{{ report.feedback_text }}</pre>
+        </div>
+
+        <h3 style="margin-top:30px;">📚 Kişiselleştirilmiş Çalışma Planı</h3>
+        
+        {% if report.learning_plan and report.learning_plan.materials %}
+            <p>Eksiklerini gidermek için senin için seçtiğimiz kaynaklar:</p>
+            {% for mat in report.learning_plan.materials %}
+                <div class="material-item">
+                    <div>
+                        <span class="tag">{{ mat.skill_tag }}</span>
+                        <strong>{{ mat.title }}</strong>
+                    </div>
+                    <a href="{{ mat.content_url }}" target="_blank" class="btn-link">Çalış ▶</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="material-item">Harika! Ciddi bir eksiğin bulunamadı.</div>
+        {% endif %}
+    </div>
+
+    <a href="/exam" class="retry-btn">Tekrar Dene</a>
+</div>
+
+</body>
+</html>

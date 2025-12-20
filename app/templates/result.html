@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <div class="card shadow-lg mb-4 border-0">
+                <div class="card-body p-5 text-center bg-primary text-white rounded">
+                    <h1 class="display-4 fw-bold">Tebrikler, {{ current_user.name.split()[0] }}!</h1>
+                    <p class="lead">Sınavı başarıyla tamamladın.</p>
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <small class="text-uppercase opacity-75">Tespit Edilen Seviye</small>
+                            <h2 class="display-2 fw-bold">{{ report.level_result.value }}</h2>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-uppercase opacity-75">Genel Başarı</small>
+                            <h2 class="display-2 fw-bold">%{{ report.score | int }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header bg-white py-3">
+                    <h4 class="fw-bold text-primary mb-0">
+                        <i class="fa-solid fa-robot me-2"></i> Yapay Zeka Yol Haritası
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="ai-content">
+                        {{ report.ai_feedback | safe }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="{{ url_for('auth.dashboard') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="fa-solid fa-home me-2"></i>Ana Ekrana Dön
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-5 col-lg-4">
+        
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark">Aramıza Katıl</h2>
+            <p class="text-muted">Seviyeni öğrenmeye başlamak için hesap oluştur.</p>
+        </div>
+
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-5">
+                <form action="" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase text-muted">Ad Soyad</label>
+                        <input type="text" name="name" class="form-control bg-light" required placeholder="Adınız Soyadınız">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase text-muted">E-posta</label>
+                        <input type="email" name="email" class="form-control bg-light" required placeholder="ornek@email.com">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase text-muted">Şifre</label>
+                        <input type="password" name="password" class="form-control bg-light" required placeholder="En az 6 karakter">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold rounded-pill shadow-sm">
+                        Hesap Oluştur <i class="fa-solid fa-user-plus ms-2"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="card-footer bg-white text-center py-3 border-0">
+                <small class="text-muted">Zaten hesabın var mı?</small> 
+                <a href="{{ url_for('auth.login') }}" class="text-primary fw-bold text-decoration-none">Giriş Yap</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

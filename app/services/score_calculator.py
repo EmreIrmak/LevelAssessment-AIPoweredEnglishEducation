@@ -1,0 +1,57 @@
+from app import db
+from app.models import Report, CEFRLevel, ModuleType
+from app.services.nlp_service import NLPService # <--- İçe aktarmayı unutmayın!
+from app.services.learning_plan_service import LearningPlanService
+
+class ScoreCalculator:
+    @staticmethod
+    def calculate_score(session):
+        correct_count = 0
+        total_questions = 0
+        weak_topics = [] # Yanlış yapılan konuları tutacağız
+        
+        for response in session.responses:
+            question = response.question # Artık hata vermeyecek :)
+            total_questions += 1
+            
+            if question.question_type.value == 'MULTIPLE_CHOICE':
+                if response.selected_option == question.correct_answer:
+                    response.is_correct = True
+                    correct_count += 1
+                else:
+                    response.is_correct = False
+                    # Hata yapılan konuyu listeye ekle (örn: GRAMMAR)
+                    if question.module.value not in weak_topics:
+                        weak_topics.append(question.module.value)
+            else:
+                response.is_correct = None 
+        
+        score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
+        
+        # --- AI ENTEGRASYONU BURADA BAŞLIYOR ---
+        student_level = session.student.current_level.value
+        
+        # Yapay Zeka'dan yorum al
+        ai_feedback = NLPService.generate_feedback(
+            student_level=student_level,
+            score=score,
+            weak_topics=weak_topics
+        )
+        # ---------------------------------------
+
+        report = Report(
+            test_session_id=session.id,
+            overall_score=score,
+            cefr_level=session.student.current_level,
+            feedback_text=ai_feedback # Artık statik değil, dinamik!
+        )
+        
+        db.session.add(report)
+        db.session.commit()
+        
+        LearningPlanService.create_plan(
+        student=session.student,
+        weak_topics=weak_topics
+    )
+        
+        return report

@@ -1,0 +1,59 @@
+/* General Settings */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #0b1324;
+    /* Uniform navy background */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Card Effects */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+/* Exam Options */
+.option-label {
+    display: block;
+    background: var(--card-soft);
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+    color: var(--text);
+}
+
+.option-label:hover {
+    background-color: var(--card-soft-2);
+    border-color: rgba(var(--primary-rgb), .55);
+}
+
+/* When a radio button is selected */
+input[type="radio"]:checked+.option-text {
+    color: var(--primary);
+    font-weight: bold;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 500;
+}
+
+/* Navbar Brand */
+.navbar-brand {
+    letter-spacing: 1px;
+}

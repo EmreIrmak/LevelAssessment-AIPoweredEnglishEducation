@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% set public_full_bleed = true %}
+
+{% block content %}
+<div class="container-fluid px-5 py-5" style="max-width: none;">
+    <!-- Hero Section -->
+    <div class="row g-5 mb-5 align-items-center">
+        <div class="col-lg-6">
+            <div class="mb-4">
+                <div class="level-badge mb-4" style="width: fit-content; font-size: 4rem; padding: 2rem;">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h1 class="text-white fw-bold mb-4" style="font-size: 4rem; line-height: 1.2;">
+                    Boost your learning speed by <span style="color: #9333ea;">5X</span>
+                </h1>
+                <p class="text-muted mb-5" style="font-size: 1.5rem; line-height: 1.7;">
+                    Improve your English level with an AI-powered personal plan. Discover your strengths and
+                    weaknesses through comprehensive modules.
+                </p>
+                <div class="d-flex gap-4 mb-5">
+                    <a href="{% if current_user.is_authenticated %}{{ url_for('auth.dashboard') }}{% else %}{{ url_for('auth.register') }}{% endif %}" class="btn btn-primary btn-lg px-5 py-4"
+                        style="font-size: 1.3rem;">
+                        <i class="fa-solid fa-rocket me-2"></i>
+                        Start for Free
+                    </a>
+                    <a href="{% if current_user.is_authenticated %}{{ url_for('auth.dashboard') }}{% else %}{{ url_for('auth.login') }}{% endif %}" class="btn btn-outline-light btn-lg px-5 py-4"
+                        style="font-size: 1.3rem;">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i>
+                        Sign In
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="row g-4">
+                <div class="col-md-3 col-6">
+                    <div class="glass-card p-4 text-center">
+                        <div class="hero-metric mb-2">
+                            <div class="overall" style="font-size: 3rem;">6</div>
+                        </div>
+                        <div class="text-muted" style="font-size: 1.1rem;">Modules</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="glass-card p-4 text-center">
+                        <div class="hero-metric mb-2">
+                            <div class="overall" style="font-size: 3rem;">A1-C2</div>
+                        </div>
+                        <div class="text-muted" style="font-size: 1.1rem;">CEFR Level</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="glass-card p-4 text-center">
+                        <div class="hero-metric mb-2">
+                            <i class="fa-solid fa-robot" style="font-size: 3rem; color: #9333ea;"></i>
+                        </div>
+                        <div class="text-muted" style="font-size: 1.1rem;">AI Analysis</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="glass-card p-4 text-center">
+                        <div class="hero-metric mb-2">
+                            <i class="fa-solid fa-certificate" style="font-size: 3rem; color: #9333ea;"></i>
+                        </div>
+                        <div class="text-muted" style="font-size: 1.1rem;">Detailed Report</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="glass-card p-5"
+                style="background: linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);">
+                <div class="text-center">
+                    <i class="fa-solid fa-brain mb-5" style="font-size: 12rem; color: rgba(147, 51, 234, 0.4);"></i>
+                    <h3 class="text-white fw-bold mb-4" style="font-size: 2.5rem;">AI-Powered English Level Assessment
+                    </h3>
+                    <p class="text-muted mb-0" style="font-size: 1.3rem; line-height: 1.7;">
+                        Start your English journey with AI-powered personalized feedback and a learning plan.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-card p-5 h-100">
+                <div class="mb-4">
+                    <div class="pill" style="width: fit-content; font-size: 2.5rem; padding: 1.5rem;">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                </div>
+                <h4 class="text-white fw-bold mb-3" style="font-size: 1.8rem;">AI-Powered Analysis</h4>
+                <p class="text-muted mb-0" style="font-size: 1.15rem; line-height: 1.7;">
+                    We analyze your performance in depth and provide personalized feedback.
+                </p>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-card p-5 h-100">
+                <div class="mb-4">
+                    <div class="pill" style="width: fit-content; font-size: 2.5rem; padding: 1.5rem;">
+                        <i class="fa-solid fa-headphones"></i>
+                    </div>
+                </div>
+                <h4 class="text-white fw-bold mb-3" style="font-size: 1.8rem;">6 Comprehensive Modules</h4>
+                <p class="text-muted mb-0" style="font-size: 1.15rem; line-height: 1.7;">
+                    We assess all core skills: Grammar, Vocabulary, Reading, Writing, Listening, and Speaking.
+                </p>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-card p-5 h-100">
+                <div class="mb-4">
+                    <div class="pill" style="width: fit-content; font-size: 2.5rem; padding: 1.5rem;">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                </div>
+                <h4 class="text-white fw-bold mb-3" style="font-size: 1.8rem;">Detailed Reporting</h4>
+                <p class="text-muted mb-0" style="font-size: 1.15rem; line-height: 1.7;">
+                    Get module-by-module performance insights and tailored improvement suggestions.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="glass-card p-5 text-center">
+        <h2 class="text-white fw-bold mb-4" style="font-size: 3rem;">Get Started Now</h2>
+        <p class="text-muted mb-5" style="font-size: 1.4rem; line-height: 1.7; max-width: 900px; margin: 0 auto 3rem;">
+            Take the English level assessment to uncover your strengths and weaknesses. Get your AI-powered personal
+            learning plan right away.
+        </p>
+        <a href="{% if current_user.is_authenticated %}{{ url_for('auth.dashboard') }}{% else %}{{ url_for('auth.register') }}{% endif %}" class="btn btn-primary btn-lg px-5 py-4" style="font-size: 1.3rem;">
+            <i class="fa-solid fa-rocket me-2"></i>
+            Sign Up Free
+        </a>
+    </div>
+</div>
+{% endblock %}

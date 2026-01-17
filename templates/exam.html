@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel-head">
+    <div>
+        <h2 class="panel-title">Level Assessment</h2>
+        <div class="panel-subtitle">Answer the question. Use Prev/Next to navigate within this module.</div>
+    </div>
+    <div class="panel-actions">
+        <span class="pill"><i class="fa-solid fa-layer-group"></i> {{ session.current_module.value }}</span>
+        <span class="pill"><i class="fa-solid fa-list-ol"></i> Q{{ index }}/{{ total }}</span>
+        {% if remaining_seconds is not none %}
+        <span id="timerBadge" class="pill" data-remaining="{{ remaining_seconds }}">
+            <i class="fa-regular fa-clock"></i>
+            <span data-role="timerText">
+                {{ (remaining_seconds // 60) }}min {{ (remaining_seconds % 60) }}secs
+            </span>
+        </span>
+        {% endif %}
+    </div>
+</div>
+
+<div class="glass-card p-4 p-md-5">
+    <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="text-muted small">Overall Exam Progress (All 6 Modules)</div>
+            <div class="text-muted small">{{ overall_progress }}%</div>
+        </div>
+        <div class="progress" style="height:10px;">
+            <div class="progress-bar"
+                style="width: {{ overall_progress }}%; background: linear-gradient(90deg, var(--primary), var(--accent));">
+            </div>
+        </div>
+        <div class="text-muted small mt-2">Module {{ module_index + 1 }} / {{ module_total }}</div>
+    </div>
+
+    {% if session.current_module.value == 'Reading' %}
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="stat" style="max-height: 60vh; overflow-y: auto;">
+                <div class="k mb-3">Reading Passage</div>
+                {% if reading_paragraphs %}
+                    {% for p in reading_paragraphs %}
+                    <p class="text-white" style="line-height:1.6;">{{ p }}</p>
+                    {% endfor %}
+                {% elif reading_passage %}
+                    <div class="text-white" style="white-space: pre-wrap;">{{ reading_passage }}</div>
+                {% else %}
+                    <div class="text-muted">Reading passage is unavailable. Please refresh the question bank.</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="stat mb-3">
+                <div class="k mb-2">Question</div>
+                <div class="text-white fw-semibold" style="white-space: pre-wrap;">{{ reading_question or question.text }}</div>
+            </div>
+            <form id="examForm" action="{{ url_for('test.get_question', session_id=session.id) }}" method="POST">
+                <input type="hidden" name="question_id" value="{{ question.id }}">
+                <input type="hidden" name="audio_filename" id="audioFilenameInput" value="">
+
+                {% if question.question_type.value == 'Multiple Choice' and options %}
+                <div class="d-grid gap-2">
+                    {% for key, val in options.items() %}
+                    <label class="stat d-flex align-items-start gap-2" style="cursor:pointer;">
+                        <input class="form-check-input mt-1" type="radio" name="option" value="{{ key }}" {% if
+                            existing_response and existing_response.selected_option==key %}checked{% endif %}>
+                        <div>
+                            <div class="text-white fw-semibold">{{ key }})</div>
+                            <div class="text-muted">{{ val }}</div>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <textarea name="text_answer" class="form-control" rows="6"
+                    placeholder="Type your answer here...">{% if existing_response and existing_response.text_answer %}{{ existing_response.text_answer }}{% endif %}</textarea>
+                {% endif %}
+
+                <div class="mt-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <button type="submit" name="action" value="prev" class="btn btn-outline-light">
+                        <i class="fa fa-arrow-left me-2"></i> Back
+                    </button>
+                    <div class="d-flex gap-2">
+                        <button type="submit" name="action" value="next" class="btn btn-primary px-5">
+                            Next <i class="fa fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-white fw-bold fs-4 mb-3" style="white-space: pre-wrap;">{{ question_text or question.text }}</div>
+
+    <form id="examForm" action="{{ url_for('test.get_question', session_id=session.id) }}" method="POST">
+        <input type="hidden" name="question_id" value="{{ question.id }}">
+        <input type="hidden" name="audio_filename" id="audioFilenameInput" value="">
+
+        {% if session.current_module.value == 'Listening' and question.audio_url %}
+        <div class="stat mb-4">
+            <div class="k mb-2">Audio</div>
+            <audio controls preload="none" class="w-100">
+                <source src="{{ question.audio_url }}">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        {% endif %}
+
+        {% if session.current_module.value == 'Speaking' %}
+        {% set prep_mins = (speaking_prep_seconds // 60) %}
+        {% set prep_secs = (speaking_prep_seconds % 60) %}
+        {% set resp_mins = (speaking_response_seconds // 60) %}
+        {% set resp_secs = (speaking_response_seconds % 60) %}
+        <div class="stat mb-3">
+            <div class="k">Preparation Time</div>
+            <div class="v" id="prepTimerText">{{ '%02d' | format(prep_mins) }}:{{ '%02d' | format(prep_secs) }}</div>
+            <div class="text-muted small">{{ speaking_prep_seconds }}s - Recording will start automatically when preparation time ends.</div>
+        </div>
+        <div class="stat mb-3">
+            <div class="k">Response Time</div>
+            <div class="v" id="respTimerText">{{ '%02d' | format(resp_mins) }}:{{ '%02d' | format(resp_secs) }}</div>
+            <div class="text-muted small" id="speakingState">{{ speaking_response_seconds }}s - Waiting...</div>
+        </div>
+        <textarea name="text_answer" id="speakingTranscript" class="form-control" rows="5"
+            placeholder="Transcript will be filled automatically"
+            readonly>{% if existing_response and existing_response.text_answer %}{{ existing_response.text_answer }}{% elif existing_response and existing_response.transcript %}{{ existing_response.transcript }}{% endif %}</textarea>
+        {% elif session.current_module.value == 'Writing' %}
+        <textarea name="text_answer" id="writingAnswer" class="form-control" rows="8"
+            placeholder="Write 150–200 words. Include a clear thesis and support your points.">{% if existing_response and existing_response.text_answer %}{{ existing_response.text_answer }}{% endif %}</textarea>
+        <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="text-muted small">Target length: <strong>150–200</strong> words</div>
+            <div id="writingWordCount" class="text-muted small">Word count: 0</div>
+        </div>
+        {% elif question.question_type.value == 'Multiple Choice' and options %}
+        <div class="d-grid gap-2">
+            {% for key, val in options.items() %}
+            <label class="stat d-flex align-items-start gap-2" style="cursor:pointer;">
+                <input class="form-check-input mt-1" type="radio" name="option" value="{{ key }}" {% if
+                    existing_response and existing_response.selected_option==key %}checked{% endif %}>
+                <div>
+                    <div class="text-white fw-semibold">{{ key }})</div>
+                    <div class="text-muted">{{ val }}</div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+        {% else %}
+        <textarea name="text_answer" class="form-control" rows="6"
+            placeholder="Type your answer here...">{% if existing_response and existing_response.text_answer %}{{ existing_response.text_answer }}{% endif %}</textarea>
+        {% endif %}
+
+        <div class="mt-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <button type="submit" name="action" value="prev" class="btn btn-outline-light">
+                <i class="fa fa-arrow-left me-2"></i> Back
+            </button>
+            <div class="d-flex gap-2">
+                <button type="submit" name="action" value="next" class="btn btn-primary px-5">
+                    Next <i class="fa fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+<script id="examContext" type="application/json">
+  {{ {"sessionId": session.id, "questionId": question.id, "module": session.current_module.name, "speakingPrepSeconds": speaking_prep_seconds, "speakingResponseSeconds": speaking_response_seconds}|tojson }}
+</script>
+<script>
+    window.__EXAM_CONTEXT__ = JSON.parse(document.getElementById("examContext").textContent);
+</script>
+<script src="{{ url_for('static', filename='js/exam.js') }}"></script>
+{% endblock %}

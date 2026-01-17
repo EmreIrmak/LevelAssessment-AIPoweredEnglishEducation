@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel-head">
+    <div>
+        <h2 class="panel-title">{{ student.name }}</h2>
+        <div class="panel-subtitle">{{ student.email }}</div>
+    </div>
+    <div class="panel-actions">
+        <a class="btn btn-outline-light" href="{{ url_for('instructor.all_reports') }}">
+            <i class="fa-solid fa-arrow-left me-2"></i> All Students
+        </a>
+    </div>
+</div>
+
+<div class="glass-card p-3 p-md-4">
+    <div class="table-responsive">
+        <table class="table table-modern table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Session</th>
+                    <th>Started</th>
+                    <th>Level</th>
+                    <th>Score</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td class="text-white fw-semibold">#{{ row.session.id }}</td>
+                    <td class="text-muted">{{ row.session.start_time }}</td>
+                    <td>
+                        {% if row.report %}
+                            <span class="badge bg-primary">{{ row.report.level_result.value }}</span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.report %}
+                            <span class="text-white fw-semibold">%{{ row.report.score | int }}</span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.report %}
+                            <span class="badge bg-light text-dark">{{ row.report.status.value }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">No report</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="d-inline-flex gap-2">
+                            {% if row.report %}
+                                <a class="btn btn-sm btn-outline-light" href="{{ url_for('report.show_result', session_id=row.session.id) }}">
+                                    Report
+                                </a>
+                            {% endif %}
+                            {% if row.session.is_completed %}
+                                <a class="btn btn-sm btn-outline-warning" href="{{ url_for('instructor.review_session', session_id=row.session.id) }}">
+                                    Review Answers
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+

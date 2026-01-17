@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel-head">
+    <div>
+        <h2 class="panel-title">System Status</h2>
+        <div class="panel-subtitle">Diagnostics for environment variables and Groq connectivity.</div>
+    </div>
+    <div class="panel-actions">
+        <a class="btn btn-outline-light" href="{{ url_for('auth.dashboard') }}">
+            <i class="fa-solid fa-arrow-left me-2"></i> Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="glass-card p-4 h-100">
+            <div class="fw-bold fs-4 mb-3">Groq Config</div>
+            <div class="stat mb-3">
+                <div class="k">GROQ_API_KEY present</div>
+                <div class="fw-semibold">{{ 'YES' if groq_key_present else 'NO' }}</div>
+            </div>
+            <div class="stat mb-3">
+                <div class="k">GROQ_API_KEY length</div>
+                <div class="fw-semibold">{{ groq_key_length }}</div>
+            </div>
+            <div class="stat">
+                <div class="k">GROQ_STT_MODEL</div>
+                <div class="fw-semibold">{{ groq_stt_model }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="glass-card p-4 h-100">
+            <div class="fw-bold fs-4 mb-3">Connectivity</div>
+            {% if not groq_key_present %}
+            <div class="alert alert-danger mb-0">
+                The application process cannot see <strong>GROQ_API_KEY</strong>. Groq requests will not be sent (usage
+                stays at 0).
+            </div>
+            {% else %}
+            {% if groq_ok %}
+            <div class="alert alert-success">Groq connection OK. (<code>models.list()</code> succeeded)</div>
+            {% if models_sample %}
+            <div class="text-muted">Sample model IDs: {{ models_sample }}</div>
+            {% endif %}
+            {% else %}
+            <div class="alert alert-danger mb-0">Error: <code>{{ groq_error }}</code></div>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-1">
+    <div class="col-lg-12">
+        <div class="glass-card p-4">
+            <div class="fw-bold fs-4 mb-2">Question Bank Refresh</div>
+            <div class="text-muted mb-3">
+                This will delete ALL existing questions (and related responses) and regenerate fresh AI question pools
+                for all modules.
+            </div>
+            <a class="btn btn-danger" href="{{ url_for('admin.refresh_question_bank') }}"
+                onclick="return confirm('This will delete all existing questions and responses. Continue?');">
+                <i class="fa-solid fa-rotate"></i> Refresh Question Bank
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

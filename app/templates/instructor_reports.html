@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel-head">
+    <div>
+        <h2 class="panel-title">Instructor Dashboard</h2>
+        <div class="panel-subtitle">Latest sessions and report status overview.</div>
+    </div>
+    <div class="panel-actions">
+        <a class="btn btn-outline-light" href="{{ url_for('auth.dashboard') }}">
+            <i class="fa-solid fa-arrow-left me-2"></i> Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="glass-card p-3 p-md-4">
+    <div class="table-responsive">
+        <table class="table table-modern table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Latest Session</th>
+                    <th>Level</th>
+                    <th>Score</th>
+                    <th>Status</th>
+                    <th class="text-end">Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>
+                        <div class="text-white fw-semibold">{{ row.student.name }}</div>
+                        <div class="text-muted small">{{ row.student.email }}</div>
+                    </td>
+                    <td>
+                        {% if row.session %}
+                            <div class="text-white fw-semibold">#{{ row.session.id }}</div>
+                            <div class="text-muted small">{{ row.session.start_time }}</div>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.report %}
+                            <span class="badge bg-primary">{{ row.report.level_result.value }}</span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.report %}
+                            <span class="text-white fw-semibold">%{{ row.report.score | int }}</span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.report %}
+                            <span class="badge bg-light text-dark">{{ row.report.status.value }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">No report</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-light" href="{{ url_for('instructor.student_reports', student_id=row.student.id) }}">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+

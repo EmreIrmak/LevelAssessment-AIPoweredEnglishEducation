@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English AI Assessment</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern.css') }}">
+</head>
+
+<body>
+    {% set is_authed = current_user.is_authenticated %}
+    {% set public_full_bleed = public_full_bleed|default(false) %}
+
+    {% if is_authed %}
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <a class="brand" href="{{ url_for('auth.logout') }}">
+                <div class="logo brand-logo">
+                    <img class="brand-logo-img" src="{{ url_for('static', filename='img/logo.png') }}"
+                        onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/logo.svg') }}';"
+                        alt="English AI">
+                </div>
+                <div class="brand-text">
+                    <div class="title">
+                        {% if current_user.role.value == 'Student' %}English AI Student Portal{% else %}English AI{%
+                        endif %}
+                    </div>
+                    <div class="subtitle">
+                        {% if current_user.role.value != 'Student' %}{{ current_user.role.value }} Portal{% endif %}
+                    </div>
+                </div>
+            </a>
+
+            <div class="sidebar-menu">
+                <div class="side-section-title">Main</div>
+                <a class="nav-item-link" href="{{ url_for('auth.dashboard') }}" title="Dashboard">
+                    <i class="fa-solid fa-graduation-cap"></i><span class="nav-label">Dashboard</span>
+                </a>
+
+                {% if current_user.role.value == 'Student' %}
+                <div class="side-section-title">Assessment</div>
+                <a class="nav-item-link" href="{{ url_for('test.start_exam') }}" title="Start Exam">
+                    <i class="fa-solid fa-pen-to-square"></i><span class="nav-label">Start Exam</span>
+                </a>
+                {% endif %}
+
+                {% if current_user.role.value in ['Instructor', 'Admin'] %}
+                <div class="side-section-title">Reports</div>
+                <a class="nav-item-link" href="{{ url_for('instructor.all_reports') }}" title="Student Reports">
+                    <i class="fa-solid fa-file-lines"></i><span class="nav-label">Student Reports</span>
+                </a>
+                {% endif %}
+
+                {% if current_user.role.value == 'Admin' %}
+                <div class="side-section-title">Admin</div>
+                <a class="nav-item-link" href="{{ url_for('admin.system_status') }}" title="System Status">
+                    <i class="fa-solid fa-screwdriver-wrench"></i><span class="nav-label">System Status</span>
+                </a>
+                {% endif %}
+
+                <div class="side-section-title">Account</div>
+                <a class="nav-item-link" href="{{ url_for('auth.logout') }}" title="Logout">
+                    <i class="fa-solid fa-right-from-bracket"></i><span class="nav-label">Logout</span>
+                </a>
+            </div>
+
+            <div class="sidebar-footer" aria-label="Sidebar footer">
+                <div class="footer-logos" aria-label="Partner logos">
+                    <img src="{{ url_for('static', filename='img/partners/partner1.png') }}" alt="Partner 1"
+                        onerror="this.style.display='none'">
+                    <img src="{{ url_for('static', filename='img/partners/partner2.png') }}" alt="Partner 2"
+                        onerror="this.style.display='none'">
+                    <img src="{{ url_for('static', filename='img/partners/partner3.png') }}" alt="Partner 3"
+                        onerror="this.style.display='none'">
+                </div>
+
+                <div class="footer-links" aria-label="Footer links">
+                    <a href="#">Terms &amp; conditions</a>
+                    <a href="#">Data protection</a>
+                    <a href="#">Accessibility</a>
+                    <a href="#">Safeguarding policy</a>
+                    <a href="#">Sitemap</a>
+                </div>
+
+                <div class="footer-copy">© English AI 2026</div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="icon-btn d-none d-lg-inline-flex" id="sidebarToggle" type="button"
+                        aria-label="Toggle sidebar" aria-controls="sidebar" aria-expanded="true">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                    </button>
+                    <button class="icon-btn d-inline-flex d-lg-none" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+                <div class="right">
+                    <span class="pill">
+                        <i class="fa-solid fa-user-circle"></i> {{ current_user.name }}
+                    </span>
+                </div>
+            </header>
+
+            <!-- Mobile navigation (shown on small screens) -->
+            <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileNav"
+                aria-labelledby="mobileNavLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="mobileNavLabel">Menu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <a class="nav-item-link mb-2" href="{{ url_for('auth.dashboard') }}" title="Dashboard">
+                        <i class="fa-solid fa-graduation-cap"></i><span class="nav-label">Dashboard</span>
+                    </a>
+
+                    {% if current_user.role.value == 'Student' %}
+                    <div class="side-section-title">Assessment</div>
+                    <a class="nav-item-link mb-2" href="{{ url_for('test.start_exam') }}" title="Start Exam">
+                        <i class="fa-solid fa-pen-to-square"></i><span class="nav-label">Start Exam</span>
+                    </a>
+                    {% endif %}
+
+                    {% if current_user.role.value in ['Instructor', 'Admin'] %}
+                    <div class="side-section-title">Reports</div>
+                    <a class="nav-item-link mb-2" href="{{ url_for('instructor.all_reports') }}" title="Student Reports">
+                        <i class="fa-solid fa-file-lines"></i><span class="nav-label">Student Reports</span>
+                    </a>
+                    {% endif %}
+
+                    {% if current_user.role.value == 'Admin' %}
+                    <div class="side-section-title">Admin</div>
+                    <a class="nav-item-link mb-2" href="{{ url_for('admin.system_status') }}" title="System Status">
+                        <i class="fa-solid fa-screwdriver-wrench"></i><span class="nav-label">System Status</span>
+                    </a>
+                    <a class="nav-item-link mb-2" href="{{ url_for('admin.generate_question_bank') }}" title="Generate Bank (B2)">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i><span class="nav-label">Generate Bank (B2)</span>
+                    </a>
+                    {% endif %}
+
+                    <div class="side-section-title">Account</div>
+                    <a class="nav-item-link mb-2" href="{{ url_for('auth.logout') }}" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i><span class="nav-label">Logout</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="page">
+                {% elif public_full_bleed %}
+                <div class="public-shell">
+                    {% else %}
+                    <div class="auth-shell">
+                        <div class="auth-card p-4 p-md-5">
+                            {% endif %}
+
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                            {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                            {% endwith %}
+
+                            {% block content %}{% endblock %}
+
+                            {% if is_authed %}
+                        </div>
+        </main>
+    </div>
+    {% elif public_full_bleed %}
+    </div>
+    {% else %}
+    </div>
+    </div>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+</body>
+
+</html>

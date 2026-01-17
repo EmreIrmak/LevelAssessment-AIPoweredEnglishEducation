@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel-head">
+    <div>
+        <h2 class="panel-title">Goal Setting</h2>
+        <div class="panel-subtitle">Tell us your target level and timeframe, and we’ll tailor the plan accordingly.
+        </div>
+    </div>
+    <div class="panel-actions">
+        <span class="pill"><i class="fa-solid fa-flag-checkered"></i> Exam Completed</span>
+        <a class="btn btn-outline-light" href="{{ url_for('report.show_result', session_id=session.id) }}">
+            <i class="fa-solid fa-file-lines me-2"></i> Skip
+        </a>
+    </div>
+</div>
+
+<div class="glass-card p-4 p-md-5">
+
+    <form method="POST" class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label fw-bold small text-uppercase text-muted">Target Level</label>
+            <select class="form-select" name="target_level">
+                <option value="" selected>Skip for now</option>
+                {% for lv in levels %}
+                <option value="{{ lv }}" {% if report and report.target_level and report.target_level.value==lv
+                    %}selected{% endif %}>{{ lv }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-bold small text-uppercase text-muted">Target Timeframe (Weeks)</label>
+            <input class="form-control" type="number" name="target_weeks" min="1" max="104" placeholder="e.g., 8"
+                value="{% if report and report.target_weeks %}{{ report.target_weeks }}{% endif %}">
+        </div>
+
+        <div class="col-12">
+            <label class="form-label fw-bold small text-uppercase text-muted">Additional Note (Optional)</label>
+            <textarea class="form-control" name="goal_note" rows="4"
+                placeholder="Example: I can study 30 minutes a day, 5 days a week. I want to focus on Speaking.">{% if report and report.goal_note %}{{ report.goal_note }}{% endif %}</textarea>
+        </div>
+
+        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span class="pill"><i class="fa-solid fa-bullseye"></i> Optional</span>
+            <button class="btn btn-primary btn-lg" type="submit">
+                <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Save Goal
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

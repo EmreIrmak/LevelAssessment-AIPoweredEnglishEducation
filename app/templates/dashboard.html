@@ -1,0 +1,576 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set last_row = (student_sessions[0] if student_sessions and student_sessions|length > 0 else None) %}
+{% set qps = (config.get('QUESTIONS_PER_SECTION', {}) if config else {}) %}
+{% set total_questions = (
+    (qps.get('Vocabulary', 10))
+    + (qps.get('Grammar', 10))
+    + (qps.get('Reading', 10))
+    + (qps.get('Writing', 1))
+    + (qps.get('Listening', 8))
+    + (qps.get('Speaking', 3))
+) %}
+
+{% if current_user.role.value != 'Instructor' %}
+<section class="dash-hero mb-3"
+    style="--dash-hero-image: url('{{ url_for('static', filename='img/bigben.png') }}');"
+    aria-label="Dashboard hero">
+    <div class="dash-hero-inner">
+        <div>
+            <div class="dash-hero-eyebrow">English AI Assessment</div>
+            <h1 class="dash-hero-title">Welcome back, {{ current_user.name.split()[0] }}.</h1>
+            <div class="dash-hero-subtitle">
+                {% if current_user.role.value == 'Student' %}
+                Take your adaptive assessment and receive an instant CEFR report.
+                {% elif current_user.role.value == 'Instructor' %}
+                Review student performance and download reports.
+                {% else %}
+                Manage users and monitor system status.
+                {% endif %}
+            </div>
+        </div>
+        <div class="dash-hero-actions">
+            {% if current_user.role.value == 'Student' %}
+            <a href="{{ url_for('test.start_exam') }}" class="btn btn-primary">
+                <i class="fa-solid fa-graduation-cap me-2"></i> Begin Assessment
+            </a>
+            {% endif %}
+
+            {% if current_user.role.value in ['Instructor','Admin'] %}
+            <a href="{{ url_for('instructor.all_reports') }}" class="btn btn-outline-light">
+                <i class="fa-solid fa-file-lines me-2"></i> Reports
+            </a>
+            {% endif %}
+
+            {% if current_user.role.value == 'Admin' %}
+            <a href="{{ url_for('admin.system_status') }}" class="btn btn-outline-light">
+                <i class="fa-solid fa-screwdriver-wrench me-2"></i> System Status
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<div class="panel-head">
+    <div>
+        <h2 class="panel-title">Dashboard</h2>
+        <div class="panel-subtitle">Welcome back, {{ current_user.name.split()[0] }}.</div>
+    </div>
+</div>
+
+{% if current_user.role.value == 'Instructor' %}
+{% set instr = instructor_dashboard %}
+{% set kpis = (instr.kpis if instr else {}) %}
+{% set charts = (instr.charts if instr else {}) %}
+{% set widgets = (instr.widgets if instr else {}) %}
+{% set days = kpis.get('timeframe_days', 7) %}
+
+<div class="instr-shell" data-dashboard-api="{{ url_for('api.instructor_dashboard_stats') }}">
+    <div class="instr-kpis">
+        <div class="kpi-card">
+            <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="kpi-meta">
+                <div class="kpi-value" id="kpiTotalStudents">{{ kpis.get('total_students', 0) }}</div>
+                <div class="kpi-label">Total Students</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon"><i class="fa-solid fa-user-check"></i></div>
+            <div class="kpi-meta">
+                <div class="kpi-value" id="kpiActive">{{ kpis.get('active_this_week', 0) }}</div>
+                <div class="kpi-label">Active This Week</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="kpi-meta">
+                <div class="kpi-value" id="kpiAvgScore">{{ kpis.get('avg_score', 0) }}%</div>
+                <div class="kpi-label">Avg Score</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="kpi-meta">
+                <div class="kpi-value" id="kpiCompletion">{{ kpis.get('completion_rate', 0) }}%</div>
+                <div class="kpi-label">Completion Rate</div>
+            </div>
+        </div>
+        <div class="kpi-card kpi-filter">
+            <div class="kpi-label">Timeframe</div>
+            <div class="kpi-filter-row">
+                <i class="fa-regular fa-calendar"></i>
+                <select class="dash-select" id="dashDays" aria-label="Select timeframe">
+                    <option value="7" {% if days == 7 %}selected{% endif %}>This Week</option>
+                    <option value="30" {% if days == 30 %}selected{% endif %}>Last 30 Days</option>
+                    <option value="90" {% if days == 90 %}selected{% endif %}>Last 90 Days</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="instr-grid">
+        <div class="dash-card">
+            <div class="dash-card-head">
+                <div>
+                    <div class="dash-card-title">Results Leaderboard</div>
+                    <div class="dash-card-subtitle">Latest attempt per student</div>
+                </div>
+                <div class="dash-card-actions">
+                    <button class="btn btn-sm btn-outline-light" type="button" id="dashExport">
+                        <i class="fa-solid fa-download me-2"></i> Export
+                    </button>
+                    <a class="btn btn-sm btn-outline-light" href="{{ url_for('instructor.all_reports') }}">
+                        <i class="fa-solid fa-file-lines me-2"></i> Open Reports
+                    </a>
+                </div>
+            </div>
+
+            <div class="dash-filters">
+                <div class="dash-filter">
+                    <span class="dash-filter-label">Level</span>
+                    <select class="dash-select" id="dashLevel" aria-label="Filter by level">
+                        <option value="">All</option>
+                        <option value="A1">A1</option>
+                        <option value="A2">A2</option>
+                        <option value="B1">B1</option>
+                        <option value="B2">B2</option>
+                        <option value="C1">C1</option>
+                        <option value="C2">C2</option>
+                    </select>
+                </div>
+                <div class="dash-filter">
+                    <span class="dash-filter-label">Status</span>
+                    <select class="dash-select" id="dashStatus" aria-label="Filter by report status">
+                        <option value="">All</option>
+                        <option value="Ready">Ready</option>
+                        <option value="Enriching">Enriching</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Failed">Failed</option>
+                        <option value="No report">No report</option>
+                    </select>
+                </div>
+                <div class="dash-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" id="dashSearch" placeholder="Search student…" aria-label="Search student">
+                    <button type="button" class="icon-btn" id="dashClear" aria-label="Clear filters" title="Clear">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table dash-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Email</th>
+                            <th>Last Attempt</th>
+                            <th>Level</th>
+                            <th>Overall</th>
+                            <th class="text-end">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set rows = (instr.leaderboard if instr else []) %}
+                        {% if rows %}
+                        {% for r in rows %}
+                        {% set rep = r.get('report') %}
+                        {% set stud = r.get('student') %}
+                        {% set rep_level = (rep.get('level') if rep else '') %}
+                        {% set rep_status = (rep.get('status') if rep else 'No report') %}
+                        {% set stud_level = (stud.get('level') if stud else '') %}
+                        {% set display_level = (rep_level if rep_level else stud_level) %}
+                        <tr data-name="{{ (stud.get('name','') if stud else '')|lower }}"
+                            data-email="{{ (stud.get('email','') if stud else '')|lower }}"
+                            data-level="{{ display_level }}"
+                            data-status="{{ rep_status }}">
+                            <td>
+                                <div class="dash-student">
+                                    <div class="dash-avatar" aria-hidden="true">{{ (stud.get('name','?')[:1] if stud else '?') }}</div>
+                                    <div>
+                                        <div class="dash-student-name">{{ stud.get('name','-') if stud else '-' }}</div>
+                                        <div class="dash-student-sub">ID #{{ stud.get('id','-') if stud else '-' }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="dash-muted">{{ stud.get('email','-') if stud else '-' }}</td>
+                            <td class="dash-muted">{{ r.get('last_attempt') or '-' }}</td>
+                            <td>
+                                {% if display_level %}
+                                <span class="level-pill">{{ display_level }}</span>
+                                {% else %}
+                                <span class="dash-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="dash-overall">{% if rep %}{{ rep.get('overall', 0) }}%{% else %}-{% endif %}</td>
+                            <td class="text-end">
+                                {% if rep and rep.get('session_id') %}
+                                {% set status = rep.get('status') %}
+                                <a class="status-pill status-{{ (status or 'unknown')|lower|replace(' ','-') }}" href="{{ url_for('report.show_result', session_id=rep.get('session_id')) }}">
+                                    {{ status or 'Open' }}
+                                </a>
+                                {% else %}
+                                <span class="status-pill status-unknown">No report</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="dash-muted" id="dashEmpty">No student results yet.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="dash-footer">
+                <div class="dash-muted" id="dashCount"></div>
+            </div>
+        </div>
+
+        <div class="dash-side">
+            <div class="dash-card">
+                <div class="dash-card-head compact">
+                    <div class="dash-card-title">CEFR Level Distribution</div>
+                </div>
+                {% set dist = charts.get('cefr_distribution', []) %}
+                    {% set max_count = ((dist | map(attribute='count') | list | max) if dist else 1) %}
+                <div class="mini-bars" id="dashLevelChart" aria-label="CEFR distribution">
+                    {% for item in dist %}
+                    {% set h = ( (item.count / max_count) * 100 if max_count else 0 ) %}
+                    <button class="mini-bar" type="button" data-level="{{ item.level }}" title="Filter: {{ item.level }}">
+                        <div class="mini-bar-col" style="height: {{ h }}%"></div>
+                        <div class="mini-bar-label">{{ item.level }}</div>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-card-head compact">
+                    <div class="dash-card-title">Average Score by Module</div>
+                </div>
+                {% set mods = charts.get('avg_by_module', []) %}
+                <div class="module-bars" id="dashModuleBars">
+                    {% for item in mods %}
+                    <div class="module-bar">
+                        <div class="module-bar-k">{{ item.module[:1] }}</div>
+                        <div class="module-bar-track" aria-hidden="true">
+                            <div class="module-bar-fill" style="width: {{ item.avg }}%"></div>
+                        </div>
+                        <div class="module-bar-v">{{ item.avg }}%</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-card-head compact">
+                    <div class="dash-card-title">Class Heatmap</div>
+                </div>
+                {% set series = charts.get('attempts_series', []) %}
+                {% set max_a = ((series | map(attribute='count') | list | max) if series else 1) %}
+                <div class="heatmap" id="dashHeatmap">
+                    {% for d in series %}
+                    {% set op = (0.15 + (d.count / max_a) * 0.85) if max_a else 0.15 %}
+                    <div class="heat-cell" title="{{ d.date }}: {{ d.count }} attempts" style="--op: {{ op }}"></div>
+                    {% endfor %}
+                </div>
+                <div class="heat-legend" id="dashHeatLegend">Last {{ kpis.get('timeframe_days', 7) }} days</div>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-card-head compact">
+                    <div class="dash-card-title">Top Mistake Categories</div>
+                </div>
+                {% set mistakes = widgets.get('top_mistakes', []) %}
+                <div class="mistake-list" id="dashMistakes">
+                    {% if mistakes %}
+                    {% for m in mistakes %}
+                    <div class="mistake-row">
+                        <div class="mistake-name">{{ m.module }}</div>
+                        <div class="mistake-count">{{ m.count }}</div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="dash-muted">No mistake data yet.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/instructor_dashboard.js') }}"></script>
+
+{% else %}
+<div class="row g-3 mb-4">
+    <div class="col-lg-4">
+        <div class="glass-card p-4 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div class="brand">
+                    <div class="logo"><i class="fa-solid fa-user"></i></div>
+                </div>
+                <div>
+                    <div class="text-white fw-bold">{{ current_user.name }}</div>
+                    <div class="text-muted">{{ current_user.email }}</div>
+                </div>
+            </div>
+            <div class="row g-3 mt-3">
+                <div class="col-6">
+                    <div class="stat">
+                        <div class="k">Role</div>
+                        <div class="v" style="font-size:18px">{{ current_user.role.value }}</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="stat">
+                        <div class="k">Level</div>
+                        <div class="v" style="font-size:18px">
+                            {% if current_user.role.value == 'Student' %}{{ current_user.current_level.value }}{% else
+                            %}-{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        {% if current_user.role.value == 'Student' %}
+        <div class="glass-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                <div>
+                    <div class="text-muted text-uppercase small" style="letter-spacing:.12em;">Start Assessment</div>
+                    <div class="text-white fw-bold fs-4 mt-1">6 Phase Test</div>
+                </div>
+            </div>
+
+            <hr class="soft-divider">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="stat h-100">
+                        <div class="k">How it works</div>
+                        <div class="dash-step mt-2">
+                            <span class="dash-step-dot" aria-hidden confirm="true"></span>
+                            Answer 6 short sections (V/G/R/W/L/S)
+                        </div>
+                        <div class="dash-step">
+                            <span class="dash-step-dot" aria-hidden confirm="true"></span>
+                            Get your CEFR level + instant report
+                        </div>
+                        <div class="dash-step">
+                            <span class="dash-step-dot" aria-hidden confirm="true"></span>
+                            Receive a learning plan and certificate
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="stat h-100">
+                        <div class="k">At a glance</div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <div>Questions (total)</div>
+                            <div class="text-white fw-bold">{{ total_questions }}</div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <div>Adaptive</div>
+                            <div class="text-white fw-bold">ON</div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <div>Instant report</div>
+                            <div class="text-white fw-bold">YES</div>
+                        </div>
+
+                        {% if current_user.current_level %}
+                        <div class="dash-cefr mt-3">
+                            <div class="dash-cefr-head">Current level</div>
+                            <div class="dash-cefr-scale" data-level="{{ current_user.current_level.value }}">
+                                <span>A1</span><span>A2</span><span>B1</span><span>B2</span><span>C1</span><span>C2</span>
+                                <div class="dash-cefr-marker" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif current_user.role.value == 'Admin' %}
+        <div class="glass-card p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div class="text-white fw-bold fs-4">Admin Console</div>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-outline-light" href="{{ url_for('admin.system_status') }}">
+                        <i class="fa-solid fa-screwdriver-wrench me-2"></i> System Status
+                    </a>
+                </div>
+            </div>
+
+            {% if users %}
+            <div class="table-responsive">
+                <table class="table table-modern table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Level</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td class="text-muted">#{{ user.id }}</td>
+                            <td>
+                                <div class="text-white fw-semibold">{{ user.name }}</div>
+                                <div class="text-muted small">{{ user.email }}</div>
+                            </td>
+                            <td><span class="badge bg-light text-dark">{{ user.role.value }}</span></td>
+                            <td>
+                                {% if user.role.value == 'Student' %}
+                                <span class="badge bg-primary">{{ user.current_level.value }}</span>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <a href="{{ url_for('admin.delete_user', user_id=user.id) }}"
+                                    class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Are you sure you want to delete this user?');">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info mb-0">No registered users found.</div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="glass-card p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <div class="text-muted text-uppercase small" style="letter-spacing:.12em;">Instructor</div>
+                    <div class="text-white fw-bold fs-4">Student Reports</div>
+                    <div class="text-muted mt-1">View all students and their latest proficiency results.</div>
+                </div>
+                <a class="btn btn-outline-light" href="{{ url_for('instructor.all_reports') }}">
+                    <i class="fa-solid fa-file-lines me-2"></i> Open Reports
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endif %}
+
+{% if current_user.role.value == 'Student' %}
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="glass-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="text-white fw-bold fs-5">Your Latest Report</div>
+                <span class="pill">{% if last_row and last_row.report %}{{ last_row.report.status.value }}{% else %}No
+                    report{% endif %}</span>
+            </div>
+            {% if last_row and last_row.report %}
+            <div class="d-flex gap-3 align-items-start mt-3">
+                <div class="level-badge" style="width:56px;height:56px;">{{ last_row.report.level_result.value }}</div>
+                <div style="flex:1;">
+                    <div class="text-muted small">Session #{{ last_row.session.id }}</div>
+                    <div class="text-white fw-bold fs-4 mt-1">{{ last_row.report.score | int }}% <span
+                            class="text-muted" style="font-size:14px;font-weight:700;">Overall</span></div>
+                    <div class="skill-kpi mt-2" aria-hidden="true">
+                        <div style="width: {{ last_row.report.score | int }}%;"></div>
+                    </div>
+                    <div class="mt-3">
+                        <a class="btn btn-outline-light"
+                            href="{{ url_for('report.show_result', session_id=last_row.session.id) }}">
+                            Open Report <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-muted mt-3">No completed assessment yet. Start your first test to get a report.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="glass-card p-3 p-md-4 h-100">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <div class="text-muted text-uppercase small" style="letter-spacing:.12em;">Results & Report</div>
+                    <div class="text-white fw-bold fs-4">History</div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-modern table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Session</th>
+                            <th>Date</th>
+                            <th>Level</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th class="text-end">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if student_sessions %}
+                        {% for row in student_sessions %}
+                        <tr>
+                            <td class="text-white fw-semibold">#{{ row.session.id }}</td>
+                            <td class="text-muted">{{ row.session.start_time }}</td>
+                            <td>
+                                {% if row.report and row.report.level_result %}
+                                <span class="badge bg-primary">{{ row.report.level_result.value }}</span>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.report %}
+                                <span class="text-white fw-semibold">%{{ row.report.score | int }}</span>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.report %}
+                                <span class="badge bg-light text-dark">{{ row.report.status.value }}</span>
+                                {% else %}
+                                <span class="badge bg-secondary">No report</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                {% if row.report %}
+                                <a class="btn btn-sm btn-outline-light"
+                                    href="{{ url_for('report.show_result', session_id=row.session.id) }}">Open</a>
+                                {% else %}
+                                <span class="text-muted small">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-muted">No exam history yet.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

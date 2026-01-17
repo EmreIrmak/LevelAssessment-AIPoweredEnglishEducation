@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel-head">
+    <div>
+        <h2 class="panel-title">Student Report</h2>
+        <div class="panel-subtitle">Instructor/Admin view (overview).</div>
+    </div>
+    <div class="panel-actions">
+        <span class="pill">{{ report.status.value }}</span>
+        <a href="{{ url_for('auth.dashboard') }}" class="btn btn-outline-light">
+            <i class="fa-solid fa-arrow-left me-2"></i> Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="glass-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="text-white fw-bold fs-4">Summary</div>
+                <span class="pill">{{ report.status.value }}</span>
+            </div>
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="stat">
+                        <div class="k">Level</div>
+                        <div class="v">{{ report.level_result.value }}</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="stat">
+                        <div class="k">Score</div>
+                        <div class="v">%{{ report.score | int }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3 text-muted small">
+                Goal: {% if report.target_level %}{{ report.target_level.value }}{% else %}-{% endif %}
+                {% if report.target_weeks %} ({{ report.target_weeks }} weeks){% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="glass-card p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div class="text-white fw-bold fs-4">Skill Breakdown</div>
+                <span class="pill"><i class="fa-solid fa-layer-group"></i> {{ module_stats|length if module_stats else 0 }} sections</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-modern table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for k,v in module_stats.items() %}
+                        <tr>
+                            <td class="text-white fw-semibold">{{ k }}</td>
+                            <td class="text-white">%{{ v }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% if not module_stats %}
+                        <tr><td class="text-muted" colspan="2">No module stats.</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if weak_materials %}
+<div class="glass-card p-4 mt-3">
+    <div class="text-white fw-bold fs-5 mb-2"><i class="fa-solid fa-book-open me-2"></i> Sample Materials</div>
+    <ul class="text-white mb-0">
+        {% for m in weak_materials %}
+            <li><a class="text-white" href="{{ m.url }}" target="_blank" rel="noopener noreferrer">{{ m.title }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}
+
+
+

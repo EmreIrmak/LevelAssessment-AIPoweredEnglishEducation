@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card p-4 p-md-5">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+        <div>
+            <div class="text-muted text-uppercase small" style="letter-spacing:.12em;">Review</div>
+            <h3 class="fw-bold text-white mb-0">{{ module }} - Mistakes</h3>
+            {% if module not in ["Writing", "Speaking"] %}
+            <div class="text-muted small">Here are the questions you missed. The correct answer and a short explanation
+                are shown below.</div>
+            {% endif %}
+        </div>
+        <a class="btn btn-outline-light" href="{{ url_for('report.show_result', session_id=session.id) }}">
+            <i class="fa-solid fa-arrow-left me-2"></i> Report
+        </a>
+    </div>
+
+    {% if not items %}
+    <div class="alert alert-info mb-0">No incorrect answers in this module.</div>
+    {% else %}
+    <div class="vstack gap-3">
+        {% for item in items %}
+        {% set q = item.question %}
+        {% set resp = item.response %}
+        <div class="glass-card p-3">
+            <div class="text-white fw-bold mb-2">Question {{ loop.index }}</div>
+            <div class="text-white fw-semibold mb-3" style="white-space: pre-wrap;">{{ q.text if q else '' }}</div>
+
+            {% if item.options and item.question_type != "Open Ended" %}
+            <div class="d-grid gap-2">
+                {% for key, val in item.options.items() %}
+                {% set is_user = (resp.selected_option == key) %}
+                {% set is_correct = (item.correct_answer == key) %}
+                <label
+                    class="stat d-flex align-items-start gap-2 {% if is_user %}border-danger{% endif %} {% if is_correct %}border-success{% endif %}"
+                    style="cursor:default;">
+                    <input class="form-check-input mt-1" type="radio" disabled {% if is_user %}checked{% endif %}>
+                    <div>
+                        <div
+                            class="fw-semibold {% if is_correct %}text-success{% elif is_user %}text-danger{% else %}text-white{% endif %}">
+                            {{ key }}) {{ val }}
+                        </div>
+                        {% if is_user and not is_correct %}
+                        <div class="text-danger small">Your answer</div>
+                        {% endif %}
+                        {% if is_correct %}
+                        <div class="text-success small">Correct answer</div>
+                        {% endif %}
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="stat">
+                <div class="k">Your answer</div>
+                <div class="text-danger">{{ resp.text_answer or resp.selected_option }}</div>
+            </div>
+            {% if item.correct_answer_text %}
+            <div class="stat mt-2">
+                <div class="k">Correct answer</div>
+                <div class="text-success">{{ item.correct_answer_text }}</div>
+            </div>
+            {% endif %}
+            {% endif %}
+
+            <div class="stat mt-3">
+                <div class="k">Why is it wrong?</div>
+                <div class="text-white">
+                    {% if item.analysis %}
+                    {{ item.analysis | safe }}
+                    {% elif q and q.module.value == "Grammar" %}
+                    Likely a subject–verb agreement / articles / tense issue. Re-check the grammar structure in the
+                    chosen option.
+                    {% elif q and q.module.value == "Vocabulary" %}
+                    The options are close in meaning/context. Review key words and common collocations.
+                    {% elif q and q.module.value == "Reading" %}
+                    Use context clues for main idea/inference. Focus on the “why?” in the question.
+                    {% elif q and q.module.value == "Listening" %}
+                    You may have missed a detail. Note key words and any numbers/names, then listen again.
+                    {% elif q and q.module.value == "Writing" %}
+                    Use a checklist to review content/flow and grammar accuracy.
+                    {% elif q and q.module.value == "Speaking" %}
+                    Review structure (intro–body–conclusion) and focus on pronunciation/fluency.
+                    {% else %}
+                    You may have missed a key clue; re-read/re-listen to the context.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

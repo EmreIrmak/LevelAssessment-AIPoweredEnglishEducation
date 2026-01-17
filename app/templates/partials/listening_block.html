@@ -1,0 +1,40 @@
+<div class="list-group gap-3" style="border: none;">
+    {% for item in questions %}
+    {% set q = item.question %}
+    <div class="p-3 glass-card">
+        <div class="d-flex justify-content-between align-items-start gap-2">
+            <div class="text-white fw-bold">Q{{ item.sq.question_index + 1 }}.</div>
+        </div>
+        <div class="text-white fw-semibold mb-2" style="white-space: pre-wrap;">{{ q.text }}</div>
+        <div class="d-grid gap-2">
+            {% for key, val in (item.options or {}).items() %}
+            <label class="stat d-flex align-items-start gap-2" style="cursor:pointer;">
+                <input class="form-check-input mt-1" type="radio" name="q_{{ q.id }}" value="{{ key }}" {% if
+                    item.response and item.response.selected_option==key %}checked{% endif %}>
+                <div>
+                    <div class="text-white fw-semibold">{{ key }})</div>
+                    <div class="text-muted">{{ val }}</div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Hidden field to track audio completion -->
+<input type="hidden" id="audioCompletedField" name="audio_completed" value="0">
+
+<div class="mt-4 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center gap-3">
+        {% if block_start > 0 %}
+        <button type="submit" name="action" value="prev_block" data-action="prev_block" class="btn btn-outline-light">
+            ‹ Previous 8
+        </button>
+        {% endif %}
+        <span class="text-muted small">Page: {{ block_start + 1 }} - {{ block_end }} / {{ total }}</span>
+    </div>
+    <button type="submit" name="action" value="next" data-action="next" class="btn btn-primary px-5">
+        Continue
+    </button>
+</div>

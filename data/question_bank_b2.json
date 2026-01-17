@@ -1,0 +1,499 @@
+[
+  {
+    "module": "Grammar",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Choose the option that best completes the sentence.\n\nThe committee recommended that the proposal ______ further before any decision was made.",
+    "options": {"A": "is reviewed", "B": "be reviewed", "C": "was reviewed", "D": "will be reviewing"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Grammar",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Choose the option that best completes the sentence.\n\nHardly ______ the lecture when the students began asking questions.",
+    "options": {"A": "the professor finished", "B": "did the professor finish", "C": "the professor had finished", "D": "had the professor finished"},
+    "correct_answer": "D"
+  },
+  {
+    "module": "Grammar",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Choose the option that best completes the sentence.\n\nIf the data ______ more carefully, the error would have been detected earlier.",
+    "options": {"A": "had been analyzed", "B": "were analyzed", "C": "have been analyzed", "D": "would be analyzed"},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Grammar",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Choose the option that best completes the sentence.\n\nThe research team, along with its external advisors, ______ scheduled to present the findings next week.",
+    "options": {"A": "are", "B": "is", "C": "were", "D": "be"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Grammar",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Choose the option that best completes the sentence.\n\nNot only ______ the results surprising, but they also challenged the prevailing theory.",
+    "options": {"A": "were", "B": "are", "C": "did", "D": "had"},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Grammar",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Choose the option that best completes the sentence.\n\nIt is essential that every applicant ______ the instructions precisely.",
+    "options": {"A": "follows", "B": "follow", "C": "to follow", "D": "following"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Grammar",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Choose the option that best completes the sentence.\n\nThe more thoroughly the evidence is examined, the less likely we are to draw ______ conclusions.",
+    "options": {"A": "premature", "B": "previous", "C": "primary", "D": "precious"},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Grammar",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Choose the option that best completes the sentence.\n\nBy the time the report is published, the methodology ______ by independent reviewers.",
+    "options": {"A": "will scrutinize", "B": "will have been scrutinized", "C": "has scrutinized", "D": "had scrutinized"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Grammar",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Choose the option that best completes the sentence.\n\nThe speaker’s argument was persuasive; ______, it relied on several unverified assumptions.",
+    "options": {"A": "therefore", "B": "moreover", "C": "nevertheless", "D": "in addition"},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Grammar",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Choose the option that best completes the sentence.\n\nNo sooner ______ the experiment than the power outage disrupted the equipment.",
+    "options": {"A": "the team started", "B": "did the team start", "C": "had the team started", "D": "the team had started"},
+    "correct_answer": "C"
+  },
+
+  {
+    "module": "Vocabulary",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Select the best synonym for the word in bold.\n\nThe professor provided a **concise** summary of the article.",
+    "options": {"A": "lengthy", "B": "precise", "C": "brief", "D": "casual"},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Vocabulary",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Select the best option to complete the sentence.\n\nThe policy was introduced to **mitigate** the impact of inflation on low-income households.",
+    "options": {"A": "measure", "B": "reduce", "C": "predict", "D": "increase"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Vocabulary",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Select the best word to complete the sentence.\n\nThe author’s claims are not supported by evidence and therefore remain ______.",
+    "options": {"A": "conclusive", "B": "speculative", "C": "transparent", "D": "inevitable"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Vocabulary",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Select the best option to complete the sentence.\n\nThe report highlights the ______ between urban development and environmental protection.",
+    "options": {"A": "tension", "B": "harmony", "C": "shortcut", "D": "ornament"},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Vocabulary",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Select the best synonym for the word in bold.\n\nThe results were **consistent** with previous studies.",
+    "options": {"A": "contradictory", "B": "compatible", "C": "random", "D": "temporary"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Vocabulary",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Select the best option to complete the sentence.\n\nSeveral variables may ______ the outcome, including prior experience and motivation.",
+    "options": {"A": "influence", "B": "remove", "C": "ignore", "D": "replace"},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Vocabulary",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Select the best word to complete the sentence.\n\nThe conclusion is based on a ______ sample size, so generalizations should be cautious.",
+    "options": {"A": "substantial", "B": "limited", "C": "identical", "D": "mandatory"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Vocabulary",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Select the best option to complete the sentence.\n\nThe speaker presented a ______ argument, anticipating and addressing potential objections.",
+    "options": {"A": "fragmented", "B": "comprehensive", "C": "arbitrary", "D": "naive"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Vocabulary",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Select the best option to complete the sentence.\n\nThe findings are ______; further research is required to confirm them.",
+    "options": {"A": "preliminary", "B": "obsolete", "C": "undeniable", "D": "irrelevant"},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Vocabulary",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "Select the best synonym for the word in bold.\n\nThe committee reached a **consensus** after extensive discussion.",
+    "options": {"A": "agreement", "B": "conflict", "C": "delay", "D": "estimate"},
+    "correct_answer": "A"
+  },
+
+  {
+    "module": "Reading",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "READING:\nUniversities increasingly emphasize interdisciplinary study, arguing that complex societal problems rarely fit neatly within a single academic field. Critics, however, warn that breadth may come at the expense of depth, leaving students with a superficial understanding of multiple domains rather than mastery of one.\n\nQuestion: What is the main concern expressed by critics?",
+    "options": {"A": "Interdisciplinary study prevents students from choosing a major.", "B": "Interdisciplinary study may reduce deep expertise in any one field.", "C": "Universities refuse to fund interdisciplinary programs.", "D": "Societal problems are becoming less complex over time."},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Reading",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "READING:\nAlthough remote work can increase employee autonomy, it may also blur the boundaries between professional and personal life. Some organizations address this by encouraging clear schedules and discouraging after-hours communication, aiming to prevent burnout.\n\nQuestion: Why do some organizations discourage after-hours communication?",
+    "options": {"A": "To reduce internet costs", "B": "To eliminate remote work entirely", "C": "To prevent burnout by protecting personal time", "D": "To increase the number of meetings"},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Reading",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "READING:\nA common misconception is that memory functions like a video recording. In reality, remembering is reconstructive: individuals combine fragments of experience with expectations and prior knowledge, which can lead to confident yet inaccurate recollections.\n\nQuestion: What does the passage suggest about memory?",
+    "options": {"A": "It is perfectly reliable under stress.", "B": "It reproduces events exactly as they occurred.", "C": "It can produce inaccurate recollections despite confidence.", "D": "It improves when people avoid prior knowledge."},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Reading",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "READING:\nRenewable energy sources are often praised for their low emissions, yet integrating them into existing grids can be challenging. Because wind and solar output fluctuates, grid operators must invest in storage, flexible generation, or demand management to maintain reliability.\n\nQuestion: What is required to maintain grid reliability with wind and solar?",
+    "options": {"A": "Reducing electricity demand permanently", "B": "Eliminating storage technologies", "C": "Investing in balancing solutions like storage or demand management", "D": "Using only fossil fuels as backup"},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Reading",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "READING:\nSome economists argue that productivity gains do not automatically translate into higher wages. If bargaining power is weak or markets are highly concentrated, the benefits may accrue primarily to owners rather than workers.\n\nQuestion: Under what conditions might productivity gains fail to raise wages?",
+    "options": {"A": "When workers have strong bargaining power", "B": "When markets are competitive and decentralized", "C": "When bargaining power is weak or markets are concentrated", "D": "When owners invest profits in training"},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Reading",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "READING:\nThe article notes that correlation does not imply causation. Two variables may move together because a third factor influences both, or because the relationship is coincidental. Rigorous experimental design helps clarify causal claims.\n\nQuestion: What is the main point of the passage?",
+    "options": {"A": "Correlation always proves causation.", "B": "Causation is irrelevant in research.", "C": "A third variable can create a misleading correlation.", "D": "Experiments are unnecessary if data is large."},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Reading",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "READING:\nIn academic writing, authors often hedge claims using words like \"may\" or \"suggest\" to avoid overstating uncertain conclusions. This does not necessarily weaken an argument; rather, it signals appropriate caution.\n\nQuestion: Why do academic writers hedge their claims?",
+    "options": {"A": "To make the writing less formal", "B": "To hide the main conclusion", "C": "To express appropriate caution about uncertainty", "D": "To avoid citing evidence"},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Reading",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "READING:\nA policy can have unintended consequences when individuals adapt their behavior in response to new incentives. For example, a subsidy designed to reduce costs may increase demand enough to raise prices elsewhere.\n\nQuestion: What causes unintended consequences according to the passage?",
+    "options": {"A": "Individuals change behavior in response to incentives", "B": "Policies are always ignored", "C": "Demand never changes", "D": "Subsidies eliminate competition"},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Reading",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "READING:\nWhile technology can improve access to information, it also enables the rapid spread of misinformation. Platforms that optimize engagement may unintentionally promote sensational content, which can distort public understanding.\n\nQuestion: What is the risk associated with engagement-optimized platforms?",
+    "options": {"A": "They reduce information access.", "B": "They may promote sensational misinformation.", "C": "They prevent users from sharing content.", "D": "They eliminate public debate."},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Reading",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "READING:\nThe passage argues that effective leadership balances decisiveness with openness to feedback. Leaders who act quickly but ignore evidence may make consistent mistakes, whereas leaders who deliberate endlessly may miss opportunities.\n\nQuestion: What balance does the passage recommend?",
+    "options": {"A": "Speed without feedback", "B": "Feedback without decisions", "C": "Decisiveness combined with openness to evidence", "D": "Avoiding opportunities to reduce risk"},
+    "correct_answer": "C"
+  },
+
+  {
+    "module": "Writing",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "WRITING (Academic): Which thesis statement is the most effective for an essay on the impact of social media on political discourse?",
+    "options": {"A": "Social media is everywhere these days.", "B": "Social media can change politics.", "C": "By amplifying emotional content and enabling rapid mobilization, social media reshapes political discourse, but it also intensifies polarization and misinformation.", "D": "Politics is important for everyone."},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Writing",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "WRITING (Academic): Which sentence best functions as a clear topic sentence for a paragraph about renewable energy challenges?",
+    "options": {"A": "Renewable energy is good for the planet.", "B": "One major obstacle to renewable energy adoption is the intermittency of wind and solar power, which requires investment in storage and grid flexibility.", "C": "People should use less electricity.", "D": "Energy is expensive in many countries."},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Writing",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "WRITING (Academic): Which option best revises the sentence for clarity and concision?\n\n\"Due to the fact that the experiment was unsuccessful, it was decided by the researchers that they would repeat it.\"",
+    "options": {"A": "Because the experiment failed, the researchers decided to repeat it.", "B": "The experiment was unsuccessful, it was decided that it would be repeated by researchers.", "C": "Due to failure, it was repeated, which was decided by the researchers.", "D": "The researchers were repeating the experiment due to the fact it was unsuccessful."},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Writing",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "WRITING (Academic): Which transition best signals a contrast between two ideas?",
+    "options": {"A": "Furthermore", "B": "In addition", "C": "Nevertheless", "D": "For example"},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Writing",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "WRITING (Academic): Which option best strengthens an argument about public transportation investment?",
+    "options": {"A": "Public transportation is popular.", "B": "Many people like buses and trains.", "C": "By reducing congestion and emissions while improving access to jobs, investment in public transportation yields both economic and environmental benefits.", "D": "Transportation is part of city life."},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Writing",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "WRITING (Academic): Which sentence best avoids an overly absolute claim?",
+    "options": {"A": "This policy will solve unemployment completely.", "B": "This policy may contribute to reducing unemployment, although additional measures are likely necessary.", "C": "Unemployment is always caused by one factor.", "D": "There is no doubt this policy is perfect."},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Writing",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "WRITING (Academic): Which citation practice is most appropriate in academic writing?",
+    "options": {"A": "Using statistics without mentioning the source", "B": "Quoting sources and providing a clear reference to where the information came from", "C": "Relying only on personal opinions", "D": "Avoiding evidence to keep the essay simple"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Writing",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "WRITING (Academic): Which conclusion best summarizes and extends an argument about technology in education?",
+    "options": {"A": "Technology is interesting.", "B": "In conclusion, technology exists.", "C": "In sum, educational technology can personalize learning when used strategically; however, schools must also address equity and teacher training to realize its full potential.", "D": "Students should study more."},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Writing",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "WRITING (Academic): Which option best improves coherence between these sentences?\n\n\"The study was small. The results were important.\"",
+    "options": {"A": "The study was small, and as a result the results were important.", "B": "Although the study was small, the results were important.", "C": "The study was small; moreover, the results were important.", "D": "The study was small. For example, the results were important."},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Writing",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "WRITING (Academic): Which option best reflects a formal academic tone?",
+    "options": {"A": "This idea is kinda wrong, honestly.", "B": "This idea is totally awesome.", "C": "This idea warrants careful evaluation given the available evidence.", "D": "This idea is super easy to prove."},
+    "correct_answer": "C"
+  },
+
+  {
+    "module": "Listening",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "audio_url": "https://upload.wikimedia.org/wikipedia/commons/2/21/En-us-hello.ogg",
+    "text": "LISTENING:\nAudio Script: In today’s lecture, we will distinguish correlation from causation. While two variables may move together, this does not prove that one causes the other; a third factor may influence both.\n\nQuestion: What is the speaker’s main point?",
+    "options": {"A": "Correlation always proves causation.", "B": "A third factor can create a misleading correlation.", "C": "Causation is easier to prove than correlation.", "D": "Variables never change together."},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Listening",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "audio_url": "https://upload.wikimedia.org/wikipedia/commons/2/21/En-us-hello.ogg",
+    "text": "LISTENING:\nAudio Script: Remote work offers flexibility, but it can also blur boundaries. To prevent burnout, some organizations encourage clear schedules and discourage after-hours communication.\n\nQuestion: Why do organizations discourage after-hours communication?",
+    "options": {"A": "To reduce internet costs", "B": "To eliminate remote work", "C": "To protect personal time and prevent burnout", "D": "To increase the number of meetings"},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Listening",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "audio_url": "https://upload.wikimedia.org/wikipedia/commons/2/21/En-us-hello.ogg",
+    "text": "LISTENING:\nAudio Script: Interdisciplinary education is often promoted because real-world problems rarely fit within a single discipline. Critics argue, however, that too much breadth may reduce depth of expertise.\n\nQuestion: What concern do critics raise?",
+    "options": {"A": "Students cannot choose a major.", "B": "Breadth may come at the expense of depth.", "C": "Interdisciplinary programs are always cheaper.", "D": "Real-world problems are simple."},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Listening",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "audio_url": "https://upload.wikimedia.org/wikipedia/commons/2/21/En-us-hello.ogg",
+    "text": "LISTENING:\nAudio Script: Renewable energy is low-emission, yet integrating it into the grid is challenging because output fluctuates. Operators invest in storage and demand management to maintain reliability.\n\nQuestion: What helps maintain grid reliability?",
+    "options": {"A": "Eliminating storage technologies", "B": "Balancing solutions like storage or demand management", "C": "Using only coal plants", "D": "Reducing electricity access"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Listening",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "audio_url": "https://upload.wikimedia.org/wikipedia/commons/2/21/En-us-hello.ogg",
+    "text": "LISTENING:\nAudio Script: In academic writing, authors hedge claims using terms like 'may' and 'suggest' to avoid overstating uncertain conclusions.\n\nQuestion: Why do authors hedge claims?",
+    "options": {"A": "To hide the main idea", "B": "To signal appropriate caution about uncertainty", "C": "To make writing informal", "D": "To avoid evidence"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Listening",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "audio_url": "https://upload.wikimedia.org/wikipedia/commons/2/21/En-us-hello.ogg",
+    "text": "LISTENING:\nAudio Script: Productivity gains do not always translate into higher wages. If bargaining power is weak or markets are highly concentrated, benefits may accrue mainly to owners.\n\nQuestion: When might productivity gains fail to raise wages?",
+    "options": {"A": "When workers have strong bargaining power", "B": "When markets are highly concentrated", "C": "When competition is strong", "D": "When owners share profits equally"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Listening",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "audio_url": "https://upload.wikimedia.org/wikipedia/commons/2/21/En-us-hello.ogg",
+    "text": "LISTENING:\nAudio Script: Memory is reconstructive rather than a perfect recording. People combine fragments of experience with expectations, leading to confident yet inaccurate recollections.\n\nQuestion: What does the speaker say about memory?",
+    "options": {"A": "It records events exactly.", "B": "It can be inaccurate despite confidence.", "C": "It improves when people avoid knowledge.", "D": "It is always reliable under stress."},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Listening",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "audio_url": "https://upload.wikimedia.org/wikipedia/commons/2/21/En-us-hello.ogg",
+    "text": "LISTENING:\nAudio Script: A policy can have unintended consequences when people adapt their behavior to new incentives. A subsidy may increase demand enough to raise prices elsewhere.\n\nQuestion: What causes unintended consequences?",
+    "options": {"A": "People change behavior in response to incentives", "B": "Policies are always ignored", "C": "Demand never changes", "D": "Subsidies eliminate competition"},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Listening",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "audio_url": "https://upload.wikimedia.org/wikipedia/commons/2/21/En-us-hello.ogg",
+    "text": "LISTENING:\nAudio Script: Platforms that optimize engagement may unintentionally promote sensational content, which can distort public understanding.\n\nQuestion: What risk is highlighted?",
+    "options": {"A": "Reduced access to information", "B": "Promotion of sensational misinformation", "C": "Elimination of public debate", "D": "Users cannot share content"},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Listening",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "audio_url": "https://upload.wikimedia.org/wikipedia/commons/2/21/En-us-hello.ogg",
+    "text": "LISTENING:\nAudio Script: Effective leadership balances decisiveness with openness to feedback. Acting quickly without evidence may lead to repeated mistakes.\n\nQuestion: What balance is recommended?",
+    "options": {"A": "Speed without feedback", "B": "Feedback without decisions", "C": "Decisiveness combined with openness to evidence", "D": "Avoiding opportunities to reduce risk"},
+    "correct_answer": "C"
+  },
+
+  {
+    "module": "Speaking",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "SPEAKING (Assessment): Which response structure is most appropriate for a 60-second academic speaking task?",
+    "options": {"A": "State an opinion, give two reasons with examples, and conclude briefly.", "B": "Tell unrelated stories until time ends.", "C": "List random facts without connection.", "D": "Repeat the question several times."},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Speaking",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "SPEAKING (Assessment): Which option best demonstrates an effective use of signposting language?",
+    "options": {"A": "First, I will outline the main point; then, I will provide an example.", "B": "Um… you know… basically…", "C": "Anyway, whatever.", "D": "I will not explain my reasons."},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Speaking",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "SPEAKING (Assessment): Which option is the best paraphrase of the following idea?\n\n\"Policies can produce unintended consequences when people adapt to incentives.\"",
+    "options": {"A": "People never react to policies.", "B": "Policies always achieve their goals.", "C": "When incentives change, people may behave differently, leading to unexpected outcomes.", "D": "Incentives do not influence behavior."},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Speaking",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "SPEAKING (Assessment): Which response would be considered most relevant to an academic prompt?",
+    "options": {"A": "A response that addresses the question directly and supports claims with examples.", "B": "A response that changes topic to personal hobbies.", "C": "A response that uses slang and avoids details.", "D": "A response that repeats one sentence."},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Speaking",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "SPEAKING (Assessment): Which feature best indicates B2-level speaking?",
+    "options": {"A": "Single-word answers only", "B": "Basic phrases with frequent breakdowns", "C": "Clear organization, appropriate vocabulary, and mostly accurate grammar", "D": "No attempt to connect ideas"},
+    "correct_answer": "C"
+  },
+  {
+    "module": "Speaking",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "SPEAKING (Assessment): Which option best improves coherence?",
+    "options": {"A": "Using connectors like 'however', 'therefore', and 'for instance' to link ideas", "B": "Avoiding connectors entirely", "C": "Changing topic every sentence", "D": "Speaking without pauses or structure"},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Speaking",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "SPEAKING (Assessment): Which strategy best helps manage time in a short speaking task?",
+    "options": {"A": "Plan a simple structure and keep each point brief", "B": "Start with an unrelated introduction", "C": "Avoid making any points", "D": "Speak as fast as possible without clarity"},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Speaking",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "SPEAKING (Assessment): Which response is more appropriate in formal academic speaking?",
+    "options": {"A": "I reckon it’s kinda cool, you know?", "B": "This issue warrants careful consideration given the evidence.", "C": "It’s totally whatever.", "D": "Bro, that’s wild."},
+    "correct_answer": "B"
+  },
+  {
+    "module": "Speaking",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "SPEAKING (Assessment): Which option best reflects effective pronunciation strategy for clarity?",
+    "options": {"A": "Speaking clearly at a moderate pace with natural pauses", "B": "Mumbling quickly to finish early", "C": "Whispering to avoid mistakes", "D": "Avoiding stress and intonation entirely"},
+    "correct_answer": "A"
+  },
+  {
+    "module": "Speaking",
+    "difficulty": "B2",
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "SPEAKING (Assessment): Which option best supports an opinion in academic speaking?",
+    "options": {"A": "A claim with a reason and a concrete example", "B": "A claim with no explanation", "C": "A joke unrelated to the topic", "D": "Repeating the claim only"},
+    "correct_answer": "A"
+  }
+]
+
+

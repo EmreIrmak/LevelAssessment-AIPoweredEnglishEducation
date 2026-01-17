@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel-head">
+    <div>
+        <h2 class="panel-title">Module Review</h2>
+        <div class="panel-subtitle">Before finishing, you can jump back to unanswered questions in this module.</div>
+    </div>
+    <div class="panel-actions">
+        <span class="pill"><i class="fa-solid fa-layer-group"></i> {{ session.current_module.value }}</span>
+        {% if remaining_seconds is not none %}
+        <span class="pill"><i class="fa-regular fa-clock"></i> {{ (remaining_seconds // 60) }}min {{ (remaining_seconds
+            % 60) }}secs</span>
+        {% endif %}
+    </div>
+</div>
+
+<div class="glass-card p-4 p-md-5">
+    <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="text-muted small">Overall progress</div>
+            <div class="text-muted small">{{ overall_progress }}%</div>
+        </div>
+        <div class="progress" style="height:10px;">
+            <div class="progress-bar"
+                style="width: {{ overall_progress }}%; background: linear-gradient(90deg, var(--primary), var(--accent));">
+            </div>
+        </div>
+        <div class="text-muted small mt-2">Stage {{ module_index + 1 }} / {{ module_total }}</div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <div class="text-muted text-uppercase small" style="letter-spacing:.12em;">Question Map</div>
+            <div class="text-white fw-bold fs-4">Unanswered Questions</div>
+        </div>
+        <span class="pill"><i class="fa-solid fa-list-check"></i> {{ skipped|length if skipped else 0 }}
+            unanswered</span>
+    </div>
+
+    {% if skipped and skipped|length > 0 %}
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        {% for sq in skipped %}
+        <a class="btn btn-outline-light"
+            href="{{ url_for('test.get_question', session_id=session.id, i=sq.question_index) }}">
+            Q{{ sq.question_index + 1 }}
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-success">No unanswered questions. You can finish this module.</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('test.finish_module', session_id=session.id) }}">
+        <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-check me-2"></i> Finish Module
+        </button>
+    </form>
+</div>
+{% endblock %}

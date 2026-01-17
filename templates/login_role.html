@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center mb-4">
+    <div class="d-flex justify-content-center mb-3">
+        <div class="auth-logo">
+            <img
+                class="auth-logo-img"
+                src="{{ url_for('static', filename='img/logo.png') }}"
+                onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/logo.svg') }}';"
+                alt="English AI"
+            >
+        </div>
+    </div>
+    <h2 class="fw-bold text-white mb-1">
+        {% if role.value == 'Student' %}English AI Student Portal{% else %}English AI{% endif %}
+    </h2>
+    <div class="text-muted">{{ role.value }} Login</div>
+</div>
+
+<form action="" method="post">
+    <div class="mb-3">
+        <label class="form-label fw-bold small text-uppercase text-muted">Email</label>
+        <input type="email" name="email" class="form-control" required placeholder="name@example.com">
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label fw-bold small text-uppercase text-muted">Password</label>
+        <input type="password" name="password" class="form-control" required placeholder="••••••••">
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+        Sign in <i class="fa-solid fa-arrow-right-to-bracket ms-2"></i>
+    </button>
+</form>
+
+<div class="text-center mt-4">
+    {% if role.value == 'Student' %}
+        <div class="text-muted small">No account?</div>
+        <a href="{{ url_for('auth.register_student') }}" class="text-white fw-semibold text-decoration-none">Create Student Account</a>
+    {% else %}
+        <div class="text-muted small">Need an account?</div>
+        {% if role.value == 'Instructor' %}
+            <a href="{{ url_for('auth.register_instructor') }}" class="text-white fw-semibold text-decoration-none">Register as Instructor</a>
+        {% else %}
+            <a href="{{ url_for('auth.register_admin') }}" class="text-white fw-semibold text-decoration-none">Register as Admin</a>
+        {% endif %}
+    {% endif %}
+
+    <div class="mt-3">
+        <a class="text-muted small text-decoration-none" href="{{ url_for('auth.login_student') }}">Student</a>
+        <span class="text-muted small">•</span>
+        <a class="text-muted small text-decoration-none" href="{{ url_for('auth.login_instructor') }}">Instructor</a>
+        <span class="text-muted small">•</span>
+        <a class="text-muted small text-decoration-none" href="{{ url_for('auth.login_admin') }}">Admin</a>
+    </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass-card p-4 p-md-5">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+        <div>
+            <div class="text-muted text-uppercase small" style="letter-spacing:.12em;">Listening</div>
+            <h3 class="fw-bold text-white mb-0">Questions {{ block_start + 1 }}-{{ block_end }} of {{ total }}</h3>
+            <div class="text-muted small">All 8 questions are on this page. Select your answers and submit at the
+                bottom.</div>
+        </div>
+        {% if remaining_seconds is not none %}
+        <span id="timerBadge" class="pill" data-remaining="{{ remaining_seconds }}">
+            <i class="fa-regular fa-clock"></i>
+            <span data-role="timerText">{{ (remaining_seconds // 60) }}min {{ (remaining_seconds % 60) }}secs</span>
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="progress mb-4" style="height: 10px; background: rgba(255,255,255,.08);">
+        <div class="progress-bar"
+            style="width: {{ overall_progress }}%; background: linear-gradient(90deg, var(--primary), var(--accent));">
+        </div>
+    </div>
+
+    {% if audio_url %}
+    <div class="mb-4" id="audioSection">
+        {% if block_start == 0 %}
+        <div class="alert alert-info mb-3">
+            <i class="fa-solid fa-circle-info"></i>
+            Click the "Listen" button below to start the listening section. The audio will play automatically.
+        </div>
+        <button type="button" id="playAudioBtn" class="btn btn-turquoise btn-lg mb-3">
+            <i class="fa-solid fa-play"></i> Listen
+        </button>
+        {% endif %}
+
+        <div id="audioStatus" class="alert alert-secondary" style="display: none;">
+            <div class="d-flex align-items-center gap-2">
+                <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">Playing audio...</span>
+                </div>
+                <span id="audioStatusText">Playing audio...</span>
+            </div>
+            <div class="mt-2 text-muted small">
+                <div>Audio length: <span id="audioDuration">00:00</span></div>
+                <div>Elapsed: <span id="audioCurrentTime">00:00</span></div>
+            </div>
+        </div>
+
+        <!-- Gizli audio element -->
+        <audio id="listenAudio" preload="metadata" style="display: none;">
+            <source src="{{ audio_url }}">
+            Browser does not support audio.
+        </audio>
+        <div id="audioMeta" data-audio-start="{{ audio_start_sec | default(0, true) }}"></div>
+
+        <div class="text-muted small">
+            <i class="fa-solid fa-lock"></i> After listening, you must answer all questions.
+        </div>
+    </div>
+    {% endif %}
+
+    <form id="listeningForm" action="{{ url_for('test.get_question', session_id=session.id) }}" method="POST">
+        <div id="listening-block">{% include 'partials/listening_block.html' %}</div>
+    </form>
+</div>
+
+<!-- Audio Skip Confirmation Modal -->
+<div class="modal fade" id="audioSkipModal" tabindex="-1" aria-labelledby="audioSkipModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content"
+            style="background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(148, 163, 184, 0.2);">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white" id="audioSkipModalLabel">
+                    <i class="fa-solid fa-triangle-exclamation text-warning me-2"></i>
+                    Listening Test In Progress
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-white mb-2">
+                    The audio has not finished yet.
+                </p>
+                <p class="text-muted small mb-0">
+                    Do you want to continue without listening to the full audio?
+                </p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark me-1"></i> No, wait
+                </button>
+                <button type="button" class="btn btn-primary" id="confirmSkipBtn">
+                    <i class="fa-solid fa-forward me-1"></i> Yes, skip
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Global audio instance - survives AJAX updates
+    window.listeningAudio = window.listeningAudio || null;
+    window.audioPlaying = window.audioPlaying || false;
+
+    // AJAX Form Submission - Prevent page reload to keep audio playing
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("listeningForm");
+        if (!form) return;
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const actionButton = e.submitter;
+            if (actionButton && actionButton.name) {
+                formData.append(actionButton.name, actionButton.value);
+            }
+
+            // CRITICAL: Override audio_completed from global state
+            console.log("Form submit - window.audioCompleted:", window.audioCompleted);
+            if (window.audioCompleted) {
+                formData.set("audio_completed", "1");
+                console.log("Setting audio_completed to 1");
+            }
+            console.log("audio_completed in formData:", formData.get("audio_completed"));
+
+            // Get correct form action URL
+            const formAction = form.getAttribute("action");
+
+            fetch(formAction, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Listen-Ajax": "1"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.redirect) {
+                        // Redirect if needed (e.g., module complete)
+                        console.log("Redirecting to:", data.redirect);
+                        window.location.href = data.redirect;
+                    } else if (data.ok === false && data.error) {
+                        // Audio not completed - show modal for confirmation
+                        const modal = new bootstrap.Modal(document.getElementById('audioSkipModal'));
+                        modal.show();
+
+                        // Handle "Yes, Skip" button click
+                        document.getElementById('confirmSkipBtn').onclick = function () {
+                            // User wants to skip - mark as completed and re-submit
+                            window.audioCompleted = true;
+                            console.log("User confirmed skip - re-submitting with audio_completed=1");
+
+                            modal.hide();
+
+                            // Re-submit the form (this time audio_completed will be 1)
+                            const submitButton = form.querySelector('button[name="action"][value="next"]');
+                            if (submitButton) {
+                                submitButton.click();
+                            }
+                        };
+                        // If modal is closed without clicking "Yes", do nothing (stay on page)
+                    } else if (data.ok && data.html) {
+                        // Update only the question block
+                        const blockContainer = document.getElementById("listening-block");
+                        if (blockContainer) {
+                            blockContainer.innerHTML = data.html;
+                        }
+
+                        // IMPORTANT: After updating HTML, restore audio completion state
+                        if (window.audioCompleted) {
+                            const newAudioCompletedField = document.getElementById("audioCompletedField");
+                            if (newAudioCompletedField) {
+                                newAudioCompletedField.value = "1";
+                            }
+                        }
+
+                        // Audio keeps playing in background - no need to resume!
+                    } else {
+                        console.error("Unexpected response:", data);
+                    }
+                })
+                .catch(error => {
+                    console.error("Form submission error:", error);
+                    // Fallback to normal form submission
+                    form.submit();
+                });
+        });
+    });
+
+    // Timer functionality
+    document.addEventListener("DOMContentLoaded", () => {
+        const badge = document.getElementById("timerBadge");
+        if (!badge) return;
+        const textEl = badge.querySelector('[data-role="timerText"]');
+        let remaining = parseInt(badge.getAttribute("data-remaining") || "0", 10);
+        const formatRemaining = (s) => {
+            s = Math.max(0, parseInt(s, 10) || 0);
+            const m = Math.floor(s / 60);
+            const r = s % 60;
+            return `${m}min ${r}secs`;
+        };
+        if (textEl) textEl.textContent = formatRemaining(remaining);
+        setInterval(() => {
+            remaining = Math.max(0, remaining - 1);
+            if (textEl) textEl.textContent = formatRemaining(remaining);
+            if (remaining <= 10) badge.classList.add("bg-danger");
+        }, 1000);
+    });
+
+    // Listening Audio Control
+    document.addEventListener("DOMContentLoaded", () => {
+        // Use global audio instance if exists, otherwise create
+        if (!window.listeningAudio) {
+            const audio = document.getElementById("listenAudio");
+            if (audio) {
+                window.listeningAudio = audio;
+            }
+        }
+
+        const audio = window.listeningAudio;
+        const playBtn = document.getElementById("playAudioBtn");
+        const statusDiv = document.getElementById("audioStatus");
+        const statusText = document.getElementById("audioStatusText");
+        const durationEl = document.getElementById("audioDuration");
+        const currentTimeEl = document.getElementById("audioCurrentTime");
+        const audioCompletedField = document.getElementById("audioCompletedField");
+
+        if (!audio) return;
+
+        const IS_FIRST_PAGE = {{ 'true' if block_start == 0 else 'false'
+    }};
+
+    // Format time display
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    // Track if audio completed (use window for global state)
+    // NEVER reset this once it's true!
+    if (typeof window.audioCompleted === 'undefined') {
+        window.audioCompleted = false;
+        console.log("Initializing window.audioCompleted to false");
+    } else {
+        console.log("window.audioCompleted already exists:", window.audioCompleted);
+    }
+
+    // Show duration when metadata loads
+    audio.addEventListener("loadedmetadata", () => {
+        if (durationEl) durationEl.textContent = formatTime(audio.duration);
+    });
+
+    // Update current time while playing
+    audio.addEventListener("timeupdate", () => {
+        if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
+    });
+
+    // Handle audio ended
+    audio.addEventListener("ended", () => {
+        window.audioCompleted = true;
+        console.log("Audio ended! window.audioCompleted set to:", window.audioCompleted);
+
+        if (playBtn) {
+            playBtn.disabled = true;
+            playBtn.textContent = "✓ Audio Completed";
+            playBtn.classList.remove("btn-success");
+            playBtn.classList.add("btn-success", "disabled");
+        }
+
+        if (statusText) statusText.textContent = "Audio completed. You can answer the questions.";
+
+        // Set hidden field to indicate audio is completed
+        if (audioCompletedField) {
+            audioCompletedField.value = "1";
+            console.log("Set audioCompletedField.value to:", audioCompletedField.value);
+        }
+    });
+
+    // Prevent audio controls
+    audio.addEventListener("seeking", (e) => {
+        e.preventDefault();
+        audio.currentTime = Math.max(0, audio.currentTime);
+    });
+
+    // Play button click (only on first page)
+    if (playBtn && IS_FIRST_PAGE) {
+        playBtn.addEventListener("click", () => {
+            playBtn.disabled = true;
+            playBtn.textContent = "⏸ Playing...";
+
+            if (statusDiv) statusDiv.style.display = "block";
+
+            audio.play().catch((error) => {
+                console.error("Audio playback error:", error);
+                if (statusText) statusText.textContent = "An error occurred while playing the audio.";
+                playBtn.disabled = false;
+                playBtn.textContent = "Listen";
+            });
+        });
+    }
+
+    // On subsequent pages, just show status if audio is playing
+    if (!IS_FIRST_PAGE && window.listeningAudio && !window.listeningAudio.paused) {
+        if (statusDiv) statusDiv.style.display = "block";
+    }
+
+    // Update audioCompletedField if audio already completed
+    if (window.audioCompleted && audioCompletedField) {
+        audioCompletedField.value = "1";
+    }
+});
+</script>
+{% endblock %}

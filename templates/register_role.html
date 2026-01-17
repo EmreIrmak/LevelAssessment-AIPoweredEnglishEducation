@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center mb-4">
+    <div class="d-flex justify-content-center mb-3">
+        <div class="auth-logo">
+            <img
+                class="auth-logo-img"
+                src="{{ url_for('static', filename='img/logo.png') }}"
+                onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/logo.svg') }}';"
+                alt="English AI"
+            >
+        </div>
+    </div>
+    <h2 class="fw-bold text-white mb-1">{{ role.value }} Register</h2>
+    {% if role.value == 'Student' %}
+        <div class="text-muted">Create an account to start your proficiency journey.</div>
+    {% else %}
+        <div class="text-muted">This role requires an invite code.</div>
+    {% endif %}
+</div>
+
+<form action="" method="post">
+    <div class="mb-3">
+        <label class="form-label fw-bold small text-uppercase text-muted">Full Name</label>
+        <input type="text" name="name" class="form-control" required placeholder="Name Surname">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold small text-uppercase text-muted">Email</label>
+        <input type="email" name="email" class="form-control" required placeholder="name@example.com">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold small text-uppercase text-muted">Password</label>
+        <input type="password" name="password" class="form-control" required placeholder="At least 6 characters">
+    </div>
+
+    {% if role.value != 'Student' %}
+    <div class="mb-4">
+        <label class="form-label fw-bold small text-uppercase text-muted">Invite Code</label>
+        <input type="text" name="invite_code" class="form-control" required placeholder="INVITE CODE">
+    </div>
+    {% else %}
+    <div class="mb-4"></div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+        Create Account <i class="fa-solid fa-user-plus ms-2"></i>
+    </button>
+</form>
+
+<div class="text-center mt-4">
+    <div class="text-muted small">Already have an account?</div>
+    {% if role.value == 'Student' %}
+        <a href="{{ url_for('auth.login_student') }}" class="text-white fw-semibold text-decoration-none">Sign in</a>
+    {% elif role.value == 'Instructor' %}
+        <a href="{{ url_for('auth.login_instructor') }}" class="text-white fw-semibold text-decoration-none">Sign in</a>
+    {% else %}
+        <a href="{{ url_for('auth.login_admin') }}" class="text-white fw-semibold text-decoration-none">Sign in</a>
+    {% endif %}
+
+    <div class="mt-3">
+        <a class="text-muted small text-decoration-none" href="{{ url_for('auth.register_student') }}">Student</a>
+        <span class="text-muted small">•</span>
+        <a class="text-muted small text-decoration-none" href="{{ url_for('auth.register_instructor') }}">Instructor</a>
+        <span class="text-muted small">•</span>
+        <a class="text-muted small text-decoration-none" href="{{ url_for('auth.register_admin') }}">Admin</a>
+    </div>
+</div>
+{% endblock %}
+
+

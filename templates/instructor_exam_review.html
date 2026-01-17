@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel-head">
+    <div>
+        <h2 class="panel-title">Review Exam Answers</h2>
+        <div class="panel-subtitle">
+            Session #{{ session.id }}
+            {% if student %} · {{ student.name }} ({{ student.email }}){% endif %}
+            {% if session.start_time %} · Started {{ session.start_time }}{% endif %}
+        </div>
+    </div>
+    <div class="panel-actions">
+        {% if student %}
+            <a class="btn btn-outline-light" href="{{ url_for('instructor.student_reports', student_id=student.id) }}">
+                <i class="fa-solid fa-arrow-left me-2"></i> Back to Student
+            </a>
+        {% else %}
+            <a class="btn btn-outline-light" href="{{ url_for('instructor.all_reports') }}">
+                <i class="fa-solid fa-arrow-left me-2"></i> All Students
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="glass-card p-3 p-md-4">
+    {% if not session.is_completed %}
+        <div class="alert alert-warning mb-3">
+            This session is not marked as completed. Some answers may be missing.
+        </div>
+    {% endif %}
+
+    {% if not items %}
+        <div class="text-muted">No served questions found for this session.</div>
+    {% else %}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="text-muted">Showing {{ items|length }} questions (served).</div>
+            <div class="text-muted small">Tip: correct option is highlighted in green, student selection in blue.</div>
+        </div>
+
+        {% for it in items %}
+            {% set q = it.question %}
+            {% set resp = it.response %}
+            <div class="glass-card p-3 mb-3">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                        <div class="text-muted small mb-1">
+                            {{ it.module }} · Q{{ (it.question_index or 0) + 1 }}
+                            {% if it.sq and it.sq.status %} · {{ it.sq.status.value }}{% endif %}
+                        </div>
+                        <div class="text-white fw-semibold" style="white-space: pre-wrap;">{{ q.text if q else '' }}</div>
+                        {% if q and q.audio_url %}
+                            <div class="mt-2">
+                                <audio controls preload="none" style="width: 100%; max-width: 560px;">
+                                    <source src="{{ q.audio_url }}" />
+                                </audio>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="text-end">
+                        {% if resp and resp.is_correct is not none %}
+                            {% if resp.is_correct %}
+                                <span class="badge bg-success">Correct</span>
+                            {% else %}
+                                <span class="badge bg-danger">Incorrect</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="badge bg-secondary">No answer</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if it.options and it.options|length > 0 %}
+                    <div class="mt-3">
+                        <div class="text-muted small mb-2">Answer choices</div>
+                        <div class="list-group">
+                            {% for letter, text in it.options %}
+                                {% set is_selected = (resp and resp.selected_option == letter) %}
+                                {% set is_correct = (it.correct_letter == letter) %}
+                                {% set cls = 'list-group-item bg-transparent text-white' %}
+                                {% if is_correct %}
+                                    {% set cls = cls + ' border border-success' %}
+                                {% endif %}
+                                {% if is_selected %}
+                                    {% set cls = cls + ' border border-primary' %}
+                                {% endif %}
+                                <div class="{{ cls }}" style="white-space: pre-wrap;">
+                                    <div class="d-flex justify-content-between align-items-start gap-3">
+                                        <div>
+                                            <span class="fw-semibold">{{ letter }}.</span> {{ text }}
+                                        </div>
+                                        <div class="text-nowrap">
+                                            {% if is_correct %}<span class="badge bg-success">Correct</span>{% endif %}
+                                            {% if is_selected %}<span class="badge bg-primary">Selected</span>{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mt-2 text-muted small">
+                            Correct: <span class="text-white fw-semibold">{{ it.correct_letter or '-' }}</span>
+                            {% if it.correct_text %}· <span class="text-white">{{ it.correct_text }}</span>{% endif %}
+                        </div>
+
+                        <div class="mt-1 text-muted small">
+                            Student: <span class="text-white fw-semibold">{{ resp.selected_option if resp and resp.selected_option else '-' }}</span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="mt-3">
+                        <div class="text-muted small mb-2">Student response</div>
+                        {% if resp and (resp.text_answer or resp.transcript) %}
+                            {% if resp.text_answer %}
+                                <div class="p-2 rounded border border-secondary" style="white-space: pre-wrap;">{{ resp.text_answer }}</div>
+                            {% endif %}
+                            {% if resp.transcript %}
+                                <div class="mt-2 text-muted small">Transcript</div>
+                                <div class="p-2 rounded border border-secondary" style="white-space: pre-wrap;">{{ resp.transcript }}</div>
+                            {% endif %}
+                            {% if resp.audio_filename %}
+                                <div class="mt-2 text-muted small">Audio file: <span class="text-white">{{ resp.audio_filename }}</span></div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-muted">No response submitted.</div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

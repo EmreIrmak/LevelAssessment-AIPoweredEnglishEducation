@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set ordered_modules = ["Vocabulary","Grammar","Reading","Writing","Listening","Speaking"] %}
+{% set module_score = {
+"Vocabulary": (module_stats.get("Vocabulary") if module_stats else 0),
+"Grammar": (module_stats.get("Grammar") if module_stats else 0),
+"Reading": (module_stats.get("Reading") if module_stats else 0),
+"Writing": (module_stats.get("Writing") if module_stats else 0),
+"Listening": (module_stats.get("Listening") if module_stats else 0),
+"Speaking": (module_stats.get("Speaking") if module_stats else 0)
+} %}
+
+{# CEFR gauge mapping (A1..C2) #}
+{% set cefr_level = (report.level_result.value if report.level_result else 'N/A') %}
+{% set cefr_index = {'A1':0,'A2':1,'B1':2,'B2':3,'C1':4,'C2':5}.get(cefr_level, 0) %}
+{% set cefr_angle = (-90 + (cefr_index / 5.0) * 180) %}
+
+<div class="assessment-hero mb-3">
+    <div class="glass-card p-4 hero-left">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+            <div class="d-flex gap-3 align-items-start">
+                <div>
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <div class="hero-title fs-4">Talent assessment</div>
+                        <div style="padding:10px 22px; margin-left:20px; border:2px solid rgba(var(--primary-rgb), 0.55); border-radius:16px; background: rgba(var(--primary-rgb), 0.10); box-shadow:0 10px 28px rgba(15, 23, 42, 0.10), inset 0 0 0 1px rgba(var(--primary-rgb), 0.10);">
+                            <div style="font-size:40px; font-weight:800; letter-spacing:1px; color:var(--primary); text-shadow:0 6px 18px rgba(var(--primary-rgb), 0.22);">
+                                {{ report.level_result.value }} Level
+                            </div>
+                            <div class="text-muted" style="margin-top:-4px;">CEFR Level</div>
+                        </div>
+                    </div>
+                    <div class="hero-subtitle small">
+                        Target: {% if report.target_level %}{{ report.target_level.value }}{% else %}-{% endif %}
+                        {% if report.target_weeks %} / {{ report.target_weeks }} weeks{% endif %}
+                    </div>
+                    <div class="hero-metric mt-2">
+                        <div class="overall">
+                            {{ report.score | int }}% <small>Overall</small>
+                        </div>
+                        <span id="reportStatusBadge" class="chip">
+                            <span class="dot"></span> {{ report.status.value }}
+                        </span>
+                    </div>
+                    <div class="skill-card mt-3" style="padding:12px 14px;">
+                        <div class="plan-muted">
+                            {% if report.ai_feedback %}
+                            {{ report.ai_feedback | safe }}
+                            {% else %}
+                            Solid {{ report.level_result.value }} level. Your personalized feedback is being prepared.
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap align-items-start">
+                {% if not report.target_level or not report.target_weeks %}
+                <a href="{{ url_for('test.goal', session_id=session.id) }}" class="btn btn-outline-light">
+                    <i class="fa-solid fa-flag-checkered me-2"></i> Set Goal
+                </a>
+                {% else %}
+                <a href="{{ url_for('test.goal', session_id=session.id) }}" class="btn btn-outline-light">
+                    <i class="fa-solid fa-pen me-2"></i> Update Goal
+                </a>
+                {% endif %}
+                <a href="{{ url_for('report.generate_certificate', session_id=session.id) }}" class="btn btn-turquoise">
+                    <i class="fa-solid fa-certificate me-2"></i> Generate Certificate
+                </a>
+                <a href="{{ url_for('auth.dashboard') }}" class="btn btn-outline-light">
+                    <i class="fa-solid fa-arrow-left me-2"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card p-4 hero-right">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="text-white fw-bold fs-5">Chance to reach target</div>
+            <span class="pill"><i class="fa-solid fa-chart-simple"></i></span>
+        </div>
+        <div class="text-muted small mt-1">Based on section scores (simple heuristic)</div>
+        {% set avg = ((module_score["Vocabulary"] + module_score["Grammar"] + module_score["Reading"] +
+        module_score["Writing"] + module_score["Listening"] + module_score["Speaking"]) / 6) %}
+        <div class="d-flex align-items-center gap-2 mt-3">
+            <div class="skill-kpi" style="flex:1;">
+                <div style="width: {{ avg }}%;"></div>
+            </div>
+            <div class="text-white fw-bold" style="min-width:56px; text-align:right;">{{ avg | int }}%</div>
+        </div>
+        <div class="mini-bars" aria-hidden="true">
+            {% for name in ordered_modules %}
+            {% set s = module_score[name] %}
+            <div class="bar {% if s < 60 %}low{% elif s < 75 %}mid{% endif %}" style="height: {{ (s if s else 0) }}%;">
+            </div>
+            {% endfor %}
+        </div>
+        <div class="d-flex justify-content-between mt-2">
+            {% for name in ordered_modules %}
+            <div class="text-muted" style="font-size:10px; width:16%; text-align:center;">{{ name[0:2] }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="cefr-gauge mt-4" style="--cefr-angle: {{ cefr_angle }}deg;">
+            <div class="d-flex justify-content-between align-items-end">
+                <div>
+                    <div class="cefr-gauge-title">CEFR gauge</div>
+                    <div class="cefr-gauge-sub">Your level indicator</div>
+                </div>
+                <div class="cefr-gauge-value">{{ cefr_level }}</div>
+            </div>
+
+            <div class="cefr-gauge-meter" role="img" aria-label="CEFR level gauge: {{ cefr_level }}">
+                <div class="cefr-gauge-arc">
+                    <div class="cefr-gauge-circle" aria-hidden="true"></div>
+                    <div class="cefr-gauge-needle" aria-hidden="true"></div>
+                    <div class="cefr-gauge-center" aria-hidden="true"></div>
+                </div>
+
+                <div class="cefr-gauge-scale" aria-hidden="true">
+                    <span>A1</span><span>A2</span><span>B1</span><span>B2</span><span>C1</span><span>C2</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="glass-card p-4 mb-3">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <div class="text-white fw-bold fs-4">Error Analysis</div>
+            <div class="text-muted small">Quick focus areas and suggestions across all modules</div>
+        </div>
+        <span class="pill"><i class="fa-solid fa-bug"></i> Errors</span>
+    </div>
+
+    <div class="skill-grid">
+        {% for name in ordered_modules %}
+        {% set s = module_score.get(name, 0) %}
+        {% set err_count = (module_error_counts.get(name, 0) if module_error_counts else 0) %}
+        <div class="skill-card">
+            <div class="skill-top">
+                <div class="skill-name">{{ name }}</div>
+                <div class="skill-score">Errors: {{ err_count }}</div>
+            </div>
+            <div class="skill-kpi" aria-hidden="true">
+                <div style="width: {{ s }}%;"></div>
+            </div>
+            <div class="skill-sub">
+                <div class="text-uppercase" style="letter-spacing:.12em; font-size:11px; color: rgba(148,163,184,.9);">
+                    Quick Focus</div>
+                {% if name == "Grammar" %}
+                <div>10-minute drill on subject–verb agreement, articles, and tense consistency.</div>
+                {% elif name == "Vocabulary" %}
+                <div>Confusable words + collocations. Write 10 words and 5 example sentences.</div>
+                {% elif name == "Reading" %}
+                <div>Inference / main idea. Read 2 short paragraphs and answer “why?” questions.</div>
+                {% elif name == "Writing" %}
+                <div>Write 1 paragraph (80–100 words). Plan → write → check (error list).</div>
+                {% elif name == "Listening" %}
+                <div>Listen twice: 1) gist, 2) details. Extract 5 keywords.</div>
+                {% elif name == "Speaking" %}
+                <div>Record 60–90s: intro–body–conclusion; listen back and note 3 mistakes.</div>
+                {% else %}
+                <div>15 minutes of focused daily practice and an error log.</div>
+                {% endif %}
+            </div>
+            <div class="mt-2 d-flex gap-2">
+                <a class="btn btn-sm btn-outline-light"
+                    href="{{ url_for('report.section_errors', session_id=session.id, module_name=name) }}">
+                    {% if name in ["Speaking","Writing"] %}Speaking/Writing Analysis{% else %}View Mistakes{% endif %}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="glass-card p-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+        <div class="text-white fw-bold fs-4"><i class="fa-solid fa-calendar-check me-2"></i> Personalized Learning Plan
+        </div>
+        <span class="pill"><i class="fa-solid fa-wand-magic-sparkles"></i> AI plan</span>
+    </div>
+    <div class="text-muted small mb-3">Card-based: weekly steps and short actions for each module.</div>
+
+    {% set module_durations = {
+    "Grammar": "30 min",
+    "Vocabulary": "20 min",
+    "Reading": "25 min",
+    "Writing": "20 min",
+    "Listening": "20 min",
+    "Speaking": "15 min"
+    } %}
+
+    <div class="lp-grid">
+        {% for name in ordered_modules %}
+        {% set s = module_score[name] %}
+        <div class="lp-card">
+            <div class="lp-head">
+                <span>{{ name }}</span>
+                <span class="lp-chip"><i class="fa-regular fa-clock"></i> {{ module_durations.get(name, "20 min")
+                    }}</span>
+            </div>
+            <div class="lp-body">
+                Goal: {% if s %}In this module: {{ s | int }}% → +5–10 points{% else %}First attempt{% endif %}
+            </div>
+            <div class="lp-tags">
+                {% if name in ["Grammar","Vocabulary"] %}
+                <span class="lp-tag">Daily drill</span>
+                <span class="lp-tag">Error log</span>
+                {% elif name in ["Reading","Listening"] %}
+                <span class="lp-tag">Inference</span>
+                <span class="lp-tag">Timed practice</span>
+                {% elif name == "Writing" %}
+                <span class="lp-tag">Short response</span>
+                <span class="lp-tag">Feedback loop</span>
+                {% elif name == "Speaking" %}
+                <span class="lp-tag">Self-intro</span>
+                <span class="lp-tag">Record & review</span>
+                {% else %}
+                <span class="lp-tag">Practice</span>
+                {% endif %}
+                <span class="lp-tag">Quick drill</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="pillars-grid mb-3">
+        <div class="pillar">
+            <div class="pillar-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+            <div class="pillar-title">Needs Analysis</div>
+            <div class="pillar-note">Identify weak areas</div>
+        </div>
+        <div class="pillar">
+            <div class="pillar-icon"><i class="fa-solid fa-list-check"></i></div>
+            <div class="pillar-title">Objectives</div>
+            <div class="pillar-note">Target level and timeframe</div>
+        </div>
+        <div class="pillar">
+            <div class="pillar-icon"><i class="fa-solid fa-layer-group"></i></div>
+            <div class="pillar-title">Structured Content</div>
+            <div class="pillar-note">Module-based practice</div>
+        </div>
+        <div class="pillar">
+            <div class="pillar-icon"><i class="fa-solid fa-rotate"></i></div>
+            <div class="pillar-title">Embedded Learning</div>
+            <div class="pillar-note">Daily micro-practice</div>
+        </div>
+        <div class="pillar">
+            <div class="pillar-icon"><i class="fa-solid fa-gauge-high"></i></div>
+            <div class="pillar-title">Tracking</div>
+            <div class="pillar-note">Weekly check-ins</div>
+        </div>
+        <div class="pillar">
+            <div class="pillar-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
+            <div class="pillar-title">Iterate</div>
+            <div class="pillar-note">Improve with feedback</div>
+        </div>
+    </div>
+
+    <div class="text-muted small mb-2">Weekly plan</div>
+    <div class="learning-plan-shell">
+        <div class="text-white" id="learningPlan" style="{% if not report.learning_plan %}display:none;{% endif %}">
+            {% if report.learning_plan %}
+            {{ report.learning_plan | safe }}
+            {% endif %}
+        </div>
+    </div>
+    <div id="learningPlanError" class="text-danger mt-3" style="display:none;"></div>
+
+    {% if report.goal_note %}
+    <div class="mt-4 stat">
+        <div class="k">Your note</div>
+        <div class="text-white">{{ report.goal_note }}</div>
+    </div>
+    {% endif %}
+
+    {% if resource_cards %}
+    <div class="resources-section mt-5">
+        <div class="resources-header text-center">
+            <div class="resources-title">Suggested Resources</div>
+            <div class="resources-subtitle">Helpful links for additional support in each module</div>
+        </div>
+        <div class="resources-grid">
+            {% for card in resource_cards %}
+            <div class="resource-card resource-{{ card.name | lower }}">
+                <div class="resource-card-top">
+                    <div class="resource-icon"><i class="fa-solid {{ card.icon }}"></i></div>
+                    <div class="resource-name">{{ card.name }}</div>
+                </div>
+                <ul class="resource-links">
+                    {% for item in card.materials %}
+                    <li><a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    (function pollReport() {
+        const sessionId = {{ session.id }};
+    const statusBadge = document.getElementById("reportStatusBadge");
+    const lp = document.getElementById("learningPlan");
+    const lpErr = document.getElementById("learningPlanError");
+    const aiFeedbackContainer = document.querySelector('.skill-card .plan-muted');
+
+    async function tick() {
+        try {
+            // Fetch both learning plan and report status from our new endpoint
+            const res = await fetch(`/report/result/${sessionId}/status.json`);
+            const data = await res.json();
+            if (!data.status) return;
+
+            // Update status badge
+            if (statusBadge && data.status) {
+                const dot = statusBadge.querySelector('.dot') || document.createElement('span');
+                if (!dot.classList.contains('dot')) {
+                    dot.className = 'dot';
+                    statusBadge.insertBefore(dot, statusBadge.firstChild);
+                }
+                statusBadge.lastChild.textContent = ' ' + data.status;
+            }
+
+            // Update AI feedback if available and report is ready
+            if (data.status === "Ready" || data.status === "READY") {
+                if (aiFeedbackContainer && data.ai_feedback) {
+                    aiFeedbackContainer.innerHTML = data.ai_feedback;
+                }
+                if (lp && data.learning_plan) {
+                    lp.innerHTML = data.learning_plan;
+                    lp.style.display = "";
+                }
+                if (lpErr) {
+                    if (data.learning_plan_error) {
+                        lpErr.style.display = "block";
+                        lpErr.textContent = data.learning_plan_error;
+                    } else {
+                        lpErr.style.display = "none";
+                    }
+                }
+                return; // Stop polling once report is ready
+            }
+            if (data.status === "Failed" || data.status === "FAILED") {
+                if (lpErr) {
+                    lpErr.style.display = "block";
+                    lpErr.textContent = data.learning_plan_error || "Unable to generate a learning plan.";
+                }
+                return; // Stop polling
+            }
+
+            // Still enriching - continue polling
+            setTimeout(tick, 2500);
+        } catch (e) {
+            console.error('Error polling report status:', e);
+            setTimeout(tick, 3000);
+        }
+    }
+
+    // Start polling immediately
+    tick();
+    }) ();
+</script>
+{% endblock %}

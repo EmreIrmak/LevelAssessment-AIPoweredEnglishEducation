@@ -2,6 +2,8 @@
 
 {% block content %}
 {% set last_row = (student_sessions[0] if student_sessions and student_sessions|length > 0 else None) %}
+{% set latest_report_level = (last_row.report.level_result.value if last_row and last_row.report and last_row.report.level_result else None) %}
+{% set user_level_display = (latest_report_level if latest_report_level else (current_user.current_level.value if current_user.current_level else None)) %}
 {% set qps = (config.get('QUESTIONS_PER_SECTION', {}) if config else {}) %}
 {% set total_questions = (
     (qps.get('Vocabulary', 10))
@@ -329,8 +331,7 @@
                     <div class="stat">
                         <div class="k">Level</div>
                         <div class="v" style="font-size:18px">
-                            {% if current_user.role.value == 'Student' %}{{ current_user.current_level.value }}{% else
-                            %}-{% endif %}
+                            {% if current_user.role.value == 'Student' %}{{ user_level_display or '-' }}{% else %}-{% endif %}
                         </div>
                     </div>
                 </div>
@@ -384,10 +385,10 @@
                             <div class="text-white fw-bold">YES</div>
                         </div>
 
-                        {% if current_user.current_level %}
+                        {% if user_level_display %}
                         <div class="dash-cefr mt-3">
                             <div class="dash-cefr-head">Current level</div>
-                            <div class="dash-cefr-scale" data-level="{{ current_user.current_level.value }}">
+                            <div class="dash-cefr-scale" data-level="{{ user_level_display }}">
                                 <span>A1</span><span>A2</span><span>B1</span><span>B2</span><span>C1</span><span>C2</span>
                                 <div class="dash-cefr-marker" aria-hidden="true"></div>
                             </div>

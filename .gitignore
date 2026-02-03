@@ -1,0 +1,16 @@
+# Sanal Ortam (Çok Önemli)
+venv/
+env/
+
+# Python Derleme Dosyaları
+__pycache__/
+*.pyc
+
+# Ortam Değişkenleri ve Gizli Anahtarlar
+.env
+api_keys.py
+secrets.py
+instance/
+
+# Eğer API keylerin config.py içindeyse buraya config.py de ekle
+# config.py
